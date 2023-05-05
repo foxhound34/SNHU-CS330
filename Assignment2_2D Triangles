@@ -17,18 +17,25 @@ const unsigned int HEIGHT = 600;
 
 
 // Shaders saved in a C-string to be compiled later
-const char* vertexShaderSource = "#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-"}\0";
-const char* fragmentShaderSource = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-"}\n\0";
+const char *vertexShaderSource = "#version 440 core\n"
+    "layout (location = 0) in vec3 aPos;\n"
+    "layout (location = 1) in vec4 colorFromVBO;\n"
+    "out vec4 colorFromVS;\n"
+    "void main()\n"
+    "{\n"
+    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    "   colorFromVS = colorFromVBO;\n"
+    "}\n\0";
+ 
+ 
+// Fragment Shader Program Source Code
+const char *fragmentShaderSource = "#version 440 core\n"
+    "in vec4 colorFromVS;\n"
+    "out vec4 FragColor;\n"
+    "void main()\n"
+    "{\n"
+    "   FragColor = colorFromVS;\n"
+    "}\n\0";
 
 int main()
 {
@@ -45,11 +52,20 @@ int main()
 	{
 		//Triangle One
 		// x     y    z				  Colors
-		-1.0f, 0.0f, 0.0f,		
-		-0.5f, 0.0f, 0.0f,		
-		-1.0f, 1.0f, 0.0f,
-		0.0f, -1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f,
+		//Index 0
+		-1.0f,  0.0f, 0.0f,    0.0f, 0.0f, 1.0f, //Red
+
+		//Index 1 will repeat
+		-0.5f,  0.0f, 0.0f,    0.0f, 1.0f, 0.0f, //Green
+
+		//Index 2
+		-1.0f,  1.0f, 0.0f,    1.0f, 0.0f, 0.0f, //Red
+
+		//Index 3
+		 0.0f, -1.0f, 0.0f,    0.0f, 1.0f, 0.0f, //Green
+
+		 //Index 4
+		 0.0f,  0.0f, 0.0f,    1.0f, 0.0f, 0.0f, //Red
 	};
 
 	unsigned int indices[] =
@@ -125,8 +141,12 @@ int main()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	//configures so the OpenGl knows how to use the VBO, position attributes
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+
+	//color attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	//swaps back buffer with the front buffer
 	glfwSwapBuffers(window);
@@ -156,6 +176,7 @@ int main()
 	//De-allocates resources
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 	glDeleteProgram(shaderProgram);
 
 	glfwDestroyWindow(window); //Terminates the window
