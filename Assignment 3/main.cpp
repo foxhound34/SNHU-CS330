@@ -62,15 +62,20 @@ int main()
 
 	GLfloat vertices[] = {
 		// positions         // colors
-		 0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // bottom right
-		 0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom left
-		-0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   // top
-		-0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f, 
+		-0.5f,  0.0f,  0.5f,  1.0f, 0.0f, 0.0f,   // Red
+		-0.5f,  0.0f, -0.5f,  0.0f, 1.0f, 0.0f,   // Green
+		 0.5f,  0.0f, -0.5f,  0.0f, 1.0f, 0.0f,   // Green
+		 0.5f,  0.0f,  0.5f,  0.0f, 1.0f, 0.0f,   // Green
+		 0.0f,  0.8f,  0.0f,  1.0f, 0.0f, 0.0f,   // Red
 	};
 
 	unsigned int indices[] = {
-	   0, 1, 3, // first triangle
-	   1, 2, 3  // second triangle
+	   0, 1, 2, 
+	   0, 2, 3, 
+	   0, 1, 4,
+	   1, 2, 4,
+	   2, 3, 4,
+	   3, 0, 4
 	};
 
 	//The viewpoint goes from x = 0, y = 0, to x = 800, y = 600
@@ -104,31 +109,42 @@ int main()
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
+	//allows OpenGl to account for the depth of the container
+	glEnable(GL_DEPTH_TEST);
 
 	//A loop so that the window won't be terminated immediately
 	while (!glfwWindowShouldClose(window))
 	{
 
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-
-
-		// create transformations
-		glm::mat4 transform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-		transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 0.0f)); //lotion translation
-																		   //x, y, z rotation
-		transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		ourShader.use();
+		// create transformations
+		glm::mat4 model = glm::mat4(1.0f);
+		glm::mat4 view = glm::mat4(1.0f);
+		glm::mat4 proj = glm::mat4(1.0f);
 
-		unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
-		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+		model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
 
-		//render the first triangle
+		//moves the world
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+		// field of view in radians, aspect ratio of our screen, and the closes and furthest view point
+		proj = glm::perspective(glm::radians(45.0f), (float)(WIDTH / HEIGHT), 0.1f, 100.0f);
+
+		int modelLoc = glGetUniformLocation(ourShader.ID, "model");
+		int viewLoc = glGetUniformLocation(ourShader.ID, "view");
+		int projLoc = glGetUniformLocation(ourShader.ID, "proj");
+
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
+
+		//render the container
 		glBindVertexArray(VAO);
 
 		//Drawing function start index is 0 and the number of vertices is 6, because its two triangle
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(int), GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 
