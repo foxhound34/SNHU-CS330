@@ -7,8 +7,6 @@
 //
 //---------------------------------------------------
 
-
-
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
 
@@ -22,7 +20,6 @@
 
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
-
 
 int main()
 {
@@ -81,7 +78,6 @@ int main()
 	//The viewpoint goes from x = 0, y = 0, to x = 800, y = 600
 	glViewport(0, 0, WIDTH, HEIGHT);
 
-
 	// Vertex Array Object, Vertex Buffer object
 	// VAO must be generated befor the VBO
 	//In this example I am making two objects, one for each triangle
@@ -89,7 +85,6 @@ int main()
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
-
 
 	//first triangle setup
 	glBindVertexArray(VAO);
@@ -128,8 +123,6 @@ int main()
 		glm::mat4 model = glm::mat4(1.0f);
 		glm::mat4 view = glm::mat4(1.0f);
 		glm::mat4 proj = glm::mat4(1.0f);
-
-		//glm::mat4 proj = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, 0.1f, 100.0f);
 
 		//positions the object within the space
 		model = glm::translate(model, glm::vec3(0.0f, -0.5f, 0.0f));
