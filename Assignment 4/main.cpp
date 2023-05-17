@@ -1,3 +1,5 @@
+//---------------------------------------------------
+//
 // Jeff Phillips | Derek Bamford
 // CS-330 Computer Graphics and Visualization
 // Assignment 4-3
@@ -277,16 +279,27 @@ int main()
 
 void processInput(GLFWwindow* window)
 {
+    // allows for user to exit the program using ESC
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
 	float cameraSpeed = static_cast<float>(2.5 * deltaTime);
+	//controls the forward
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		cameraPos += cameraSpeed * cameraFront;
+	//controls the back
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		cameraPos -= cameraSpeed * cameraFront;
+	//controls the strafe left
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+	//controls the strafe right
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+	//controls the upward movement
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		cameraPos += cameraSpeed * cameraUp;
+	//controls the downward movement
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+		cameraPos += cameraSpeed * -cameraUp;
 }
