@@ -26,6 +26,7 @@ void processInput(GLFWwindow* window);
 
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
+float MovementSpeed = 5.0f;
 
 // camera
 //initial camera position
@@ -291,33 +292,33 @@ int main()
 
 void processInput(GLFWwindow* window)
 {
+	
 	// allows for user to exit the program using ESC
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
-	float cameraSpeed = static_cast<float>(5.0 * deltaTime);
+	float velocity = MovementSpeed * deltaTime;
 	//controls the forward
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		cameraPos += cameraSpeed * cameraFront;
+		cameraPos += velocity * cameraFront;
 	//controls the back
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		cameraPos -= cameraSpeed * cameraFront;
+		cameraPos -= velocity * cameraFront;
 	//controls the strafe left
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * velocity;
 	//controls the strafe right
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * velocity;
 	//controls the upward movement
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-		cameraPos += cameraSpeed * cameraUp;
+		cameraPos += velocity * cameraUp;
 	//controls the downward movement
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-		cameraPos += cameraSpeed * -cameraUp;
+		cameraPos += velocity * -cameraUp;
 }
 
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
+// This method handles the resize of the window
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	// make sure the viewport matches the new window dimensions; note that width and 
@@ -342,14 +343,14 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 	lastX = xpos;
 	lastY = ypos;
 
-	float sensitivity = 0.1f; // change this value to your liking
+	float sensitivity = 0.1f;
 	xoffset *= sensitivity;
 	yoffset *= sensitivity;
 
 	yaw += xoffset;
 	pitch += yoffset;
 
-	// make sure that when pitch is out of bounds, screen doesn't get flipped
+	// makes sure that when pitch is out of bounds screen doesn't get flipped
 	if (pitch > 89.0f)
 		pitch = 89.0f;
 	if (pitch < -89.0f)
@@ -362,13 +363,20 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 	cameraFront = glm::normalize(front);
 }
 
-// glfw: whenever the mouse scroll wheel scrolls, this callback is called
-// ----------------------------------------------------------------------
+// Whenever the mouse scroll wheel scrolls, this callback is called
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	fov -= (float)yoffset;
+	MovementSpeed += (float)yoffset;
+	if (MovementSpeed < 1.0)
+		MovementSpeed = 1.0f;
+	if (MovementSpeed > 50.0f)
+		MovementSpeed = 50.0f;
+
+	//scolling will zoom in and out
+	/*fov -= (float)yoffset;
 	if (fov < 1.0f)
 		fov = 1.0f;
 	if (fov > 45.0f)
 		fov = 45.0f;
+	*/
 }
