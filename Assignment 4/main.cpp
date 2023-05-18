@@ -28,7 +28,9 @@ const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
 
 // camera
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+//initial camera position
+glm::vec3 cameraPos = glm::vec3(0.0f, 5.0f, 15.0f);
+
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -136,22 +138,20 @@ int main()
 		22, 23, 20
 	};
 
-	GLfloat triangleVertices[] = {
+	GLfloat tableVertices[] = {
 		// positions         // colors
-		-0.5f,  0.0f,  0.5f,  0.5f, 0.0f, 1.0f,
-		-0.5f,  0.0f, -0.5f,  1.0f, 5.0f, 0.0f,
-		 0.5f,  0.0f, -0.5f,  0.0f, 1.0f, 0.5f,
-		 0.5f,  0.0f,  0.5f,  0.5f, 0.0f, 1.0f,
-		 0.0f,  0.8f,  0.0f,  1.0f, 0.5f, 0.0f,
+		-2.0f,  -1.0f, -2.0f,  1.0f, 1.0f, 1.0f,
+		 2.0f,  -1.0f, -2.0f,  1.0f, 1.0f, 1.0f,
+		 2.0f,  -1.0f,  2.0f,  1.0f, 1.0f, 1.0f,
+		 2.0f,  -1.0f,  2.0f,  1.0f, 1.0f, 1.0f,
+		-2.0f,  -1.0f,  2.0f,  1.0f, 1.0f, 1.0f,
+		-2.0f,  -1.0f, -2.0f,  1.0f, 1.0f, 1.0f,
 	};
 
-	unsigned int triangleIndices[] = {
-	   0, 1, 2,
-	   0, 2, 3,
-	   0, 1, 4,
-	   1, 2, 4,
-	   2, 3, 4,
-	   3, 0, 4
+	unsigned int tableIndices[] = {
+	   0, 1, 2,   // first triangle
+	   3, 4, 5,
+	   6,
 	};
 
 	//The viewpoint goes from x = 0, y = 0, to x = 800, y = 600
@@ -188,10 +188,10 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
 
 	//Stores vertices in VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(tableVertices), tableVertices, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[1]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(triangleIndices), triangleIndices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(tableIndices), tableIndices, GL_STATIC_DRAW);
 
 	//configures so the OpenGl knows how to use the VBO, position attributes
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
@@ -248,34 +248,44 @@ int main()
 		glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 		ourShader.setMat4("view", view);
 
-		//render the container
+		//render the Rubik's cube
 		glBindVertexArray(VAOs[0]);
 
 		for (unsigned int i = 0; i < 1; i++)
 		{
 			glm::mat4 model = glm::mat4(1.0f);
 			//moves the 3D object around the world
-			model = glm::translate(model, glm::vec3(-1.5f, 0.0f, -3.0f));
+			model = glm::translate(model, glm::vec3(-3.5f, 0.0f, -1.5f));
+
+			//Rotates the objects over the degees and x, y, z axis
+			model = glm::rotate(model, glm::radians(10.0f), glm::vec3(0.0, 1.0f, 0.0f));
+
 			//changes the size of the object
-			//model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
+			model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+
 			ourShader.setMat4("model", model);
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(squareIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
 
-		//render the second container
+		//render the countertop
 		glBindVertexArray(VAOs[1]);
 
 		for (unsigned int i = 0; i < 1; i++)
 		{
 			glm::mat4 model = glm::mat4(1.0f);
 			//moves the 3D object around the world
-			model = glm::translate(model, glm::vec3(0.7f, -0.3f, -2.0f));
+			model = glm::translate(model, glm::vec3(0.0f, 2.5f, -3.0f));
+			
+			//Rotates the objects over the degees and x, y, z axis
+			model = glm::rotate(model, glm::radians(360.0f), glm::vec3(1.0, 0.0f, 0.0f));
+
 			//changes the size of the object
-			//model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
+			model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
 			ourShader.setMat4("model", model);
+
 			//draws the triangles
-			glDrawElements(GL_TRIANGLES, sizeof(triangleIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, sizeof(tableIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
 
 		//Drawing elements
@@ -299,11 +309,11 @@ int main()
 
 void processInput(GLFWwindow* window)
 {
-    // allows for user to exit the program using ESC
+	// allows for user to exit the program using ESC
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
-	float cameraSpeed = static_cast<float>(2.5 * deltaTime);
+	float cameraSpeed = static_cast<float>(5.0 * deltaTime);
 	//controls the forward
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		cameraPos += cameraSpeed * cameraFront;
