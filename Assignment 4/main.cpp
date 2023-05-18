@@ -10,7 +10,8 @@
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
 
-#include"shader.h"
+#include "shader.h"
+#include "Camera.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -29,19 +30,10 @@ const unsigned int HEIGHT = 600;
 float MovementSpeed = 5.0f;
 
 // camera
-//initial camera position
-glm::vec3 cameraPos = glm::vec3(0.0f, 5.0f, 15.0f);
-
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+float lastX = WIDTH / 2.0f;
+float lastY = HEIGHT / 2.0f;
 bool firstMouse = true;
-float yaw = -90.0f;	// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
-float pitch = 0.0f;
-float lastX = 800.0f / 2.0;
-float lastY = 600.0 / 2.0;
-float fov = 45.0f;
-
 
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
@@ -222,12 +214,12 @@ int main()
 
 		ourShader.use();
 
-		// field of view in radians, aspect ratio of our screen, and the closes and furthest view point
-		glm::mat4 projection = glm::perspective(glm::radians(fov), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+		// pass projection matrix to shader (note that in this case it could change every frame)
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 		ourShader.setMat4("projection", projection);
 
 		// camera/view transformation
-		glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		glm::mat4 view = camera.GetViewMatrix();
 		ourShader.setMat4("view", view);
 
 		//render the Rubik's cube
@@ -239,7 +231,7 @@ int main()
 			glm::mat4 model = glm::mat4(1.0f);
 
 			//moves the 3D object around the world
-			model = glm::translate(model, glm::vec3(-3.5f, 0.0f, -1.5f));
+			model = glm::translate(model, glm::vec3(-3.5f, -5.0f, -13.0f));
 
 			//Rotates the objects over the degees and x, y, z axis
 			model = glm::rotate(model, glm::radians(10.0f), glm::vec3(0.0, 1.0f, 0.0f));
@@ -261,7 +253,7 @@ int main()
 			glm::mat4 model = glm::mat4(1.0f);
 
 			//moves the 3D object around the world
-			model = glm::translate(model, glm::vec3(0.0f, 2.5f, -3.0f));
+			model = glm::translate(model, glm::vec3(0.0f, -2.5f, -15.0f));
 			
 			//Rotates the objects over the degees and x, y, z axis
 			model = glm::rotate(model, glm::radians(360.0f), glm::vec3(1.0, 0.0f, 0.0f));
@@ -293,29 +285,21 @@ int main()
 void processInput(GLFWwindow* window)
 {
 	
-	// allows for user to exit the program using ESC
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
-	float velocity = MovementSpeed * deltaTime;
-	//controls the forward
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		cameraPos += velocity * cameraFront;
-	//controls the back
+		camera.ProcessKeyboard(FORWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		cameraPos -= velocity * cameraFront;
-	//controls the strafe left
+		camera.ProcessKeyboard(BACKWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * velocity;
-	//controls the strafe right
+		camera.ProcessKeyboard(LEFT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * velocity;
-	//controls the upward movement
+		camera.ProcessKeyboard(RIGHT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-		cameraPos += velocity * cameraUp;
-	//controls the downward movement
+		camera.ProcessKeyboard(UP, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-		cameraPos += velocity * -cameraUp;
+		camera.ProcessKeyboard(DOWN, deltaTime);
 }
 
 // This method handles the resize of the window
@@ -340,43 +324,15 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 
 	float xoffset = xpos - lastX;
 	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
 	lastX = xpos;
 	lastY = ypos;
 
-	float sensitivity = 0.1f;
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-
-	yaw += xoffset;
-	pitch += yoffset;
-
-	// makes sure that when pitch is out of bounds screen doesn't get flipped
-	if (pitch > 89.0f)
-		pitch = 89.0f;
-	if (pitch < -89.0f)
-		pitch = -89.0f;
-
-	glm::vec3 front;
-	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	front.y = sin(glm::radians(pitch));
-	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	cameraFront = glm::normalize(front);
+	camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 // Whenever the mouse scroll wheel scrolls, this callback is called
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	MovementSpeed += (float)yoffset;
-	if (MovementSpeed < 1.0)
-		MovementSpeed = 1.0f;
-	if (MovementSpeed > 50.0f)
-		MovementSpeed = 50.0f;
-
-	//scolling will zoom in and out
-	/*fov -= (float)yoffset;
-	if (fov < 1.0f)
-		fov = 1.0f;
-	if (fov > 45.0f)
-		fov = 45.0f;
-	*/
+	camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
