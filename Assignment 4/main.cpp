@@ -204,10 +204,6 @@ int main()
 	//allows OpenGl to account for the depth of the container
 	glEnable(GL_DEPTH_TEST);
 
-	// pass projection matrix to shader 
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
-	ourShader.setMat4("projection", projection);
-
 	//A loop so that the window won't be terminated immediately
 	while (!glfwWindowShouldClose(window))
 	{
@@ -225,24 +221,9 @@ int main()
 
 		ourShader.use();
 
-		// create transformations
-		glm::mat4 model = glm::mat4(1.0f);
-		//glm::mat4 view = glm::mat4(1.0f);
-		glm::mat4 proj = glm::mat4(1.0f);
-
-		//moves the world
-		//view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
-
 		// field of view in radians, aspect ratio of our screen, and the closes and furthest view point
-		proj = glm::perspective(glm::radians(45.0f), (float)(WIDTH / HEIGHT), 0.1f, 100.0f);
-
-		int modelLoc = glGetUniformLocation(ourShader.ID, "model");
-		//int viewLoc = glGetUniformLocation(ourShader.ID, "view");
-		int projLoc = glGetUniformLocation(ourShader.ID, "proj");
-
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
+		glm::mat4 projection = glm::perspective(glm::radians(fov), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+		ourShader.setMat4("projection", projection);
 
 		// camera/view transformation
 		glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
@@ -252,8 +233,10 @@ int main()
 		glBindVertexArray(VAOs[0]);
 
 		for (unsigned int i = 0; i < 1; i++)
-		{
+
+		{   //initializes matrix to identity matrix
 			glm::mat4 model = glm::mat4(1.0f);
+
 			//moves the 3D object around the world
 			model = glm::translate(model, glm::vec3(-3.5f, 0.0f, -1.5f));
 
@@ -273,7 +256,9 @@ int main()
 
 		for (unsigned int i = 0; i < 1; i++)
 		{
+			//initializes matrix to identity matrix
 			glm::mat4 model = glm::mat4(1.0f);
+
 			//moves the 3D object around the world
 			model = glm::translate(model, glm::vec3(0.0f, 2.5f, -3.0f));
 			
@@ -287,9 +272,6 @@ int main()
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(tableIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
-
-		//Drawing elements
-
 
 		glfwSwapBuffers(window);
 
