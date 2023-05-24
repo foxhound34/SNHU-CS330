@@ -91,7 +91,7 @@ int main()
 	Shader ourShader("3.3.shader.vs", "3.3.shader.fs");
 
 	GLfloat squareVertices[] = {
-		// positions         // colors
+		// positions         // colors			
 		-0.5f, -0.5f, -0.5f,  0.5f, 0.0f, 1.0f,  // A 0
 		 0.5f, -0.5f, -0.5f,  0.5f, 0.0f, 1.0f,  // B 1
 		 0.5f,  0.5f, -0.5f,  0.5f, 0.0f, 1.0f,  // C 2
@@ -138,13 +138,13 @@ int main()
 	};
 
 	GLfloat tableVertices[] = {
-			// positions			// colors
-		-2.0f,  -1.0f, -2.0f,  1.0f, 1.0f, 1.0f,
-		 2.0f,  -1.0f, -2.0f,  1.0f, 1.0f, 1.0f,
-		 2.0f,  -1.0f,  2.0f,  1.0f, 1.0f, 1.0f,
-		 2.0f,  -1.0f,  2.0f,  1.0f, 1.0f, 1.0f,
-		-2.0f,  -1.0f,  2.0f,  1.0f, 1.0f, 1.0f,
-		-2.0f,  -1.0f, -2.0f,  1.0f, 1.0f, 1.0f,
+			// positions			 colors         texture
+		-2.0f,  -1.0f, -2.0f,  1.0f, 1.0f, 1.0f,    0.0f, 1.0f,
+		 2.0f,  -1.0f, -2.0f,  1.0f, 1.0f, 1.0f,	1.0f, 1.0f,
+		 2.0f,  -1.0f,  2.0f,  1.0f, 1.0f, 1.0f,	1.0f, 0.0f,
+		 2.0f,  -1.0f,  2.0f,  1.0f, 1.0f, 1.0f,	0.0f, 0.0f,
+		-2.0f,  -1.0f,  2.0f,  1.0f, 1.0f, 1.0f,	0.0f, 1.0f,
+		-2.0f,  -1.0f, -2.0f,  1.0f, 1.0f, 1.0f,	1.0f, 1.0f,
 	};
 
 	unsigned int tableIndices[] = {
@@ -183,6 +183,9 @@ int main()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
+	//texture attribute
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
 	//________________________________________________________________________________________________________________________________
 		//second container setup
 	glBindVertexArray(VAOs[1]);
@@ -195,18 +198,22 @@ int main()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(tableIndices), tableIndices, GL_STATIC_DRAW);
 
 	//configures so the OpenGl knows how to use the VBO, position attributes
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	//color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+
+	//texture attribute
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
 	//________________________________________________________________________________________________________________________________
 
 		//allows OpenGl to account for the depth of the container
 	glEnable(GL_DEPTH_TEST);
 
-	unsigned int texture1;
+	unsigned int texture1, texture2;
 	// texture 1
 	// ---------
 	glGenTextures(1, &texture1);
@@ -220,7 +227,7 @@ int main()
 	// load image, create texture and generate mipmaps
 	int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-	unsigned char* data = stbi_load("tiles.jpg", &width, &height, &nrChannels, 0);
+	unsigned char *data = stbi_load("tiles.jpg", &width, &height, &nrChannels, 0);
 	if (data)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -232,10 +239,14 @@ int main()
 	}
 	stbi_image_free(data);
 
+	// texture 2
+	
+
 	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
 	// -------------------------------------------------------------------------------------------
 	ourShader.use();
 	ourShader.setInt("texture1", 0);
+	ourShader.setInt("texture2", 1);
 
 
 	//A loop so that the window won't be terminated immediately
@@ -281,7 +292,10 @@ int main()
 
 		for (unsigned int i = 0; i < 1; i++)
 
-		{   //initializes matrix to identity matrix
+		{   
+			//glActiveTexture(GL_TEXTURE0);
+			//glBindTexture(GL_TEXTURE_2D, texture2);
+			//initializes matrix to identity matrix
 			glm::mat4 model = glm::mat4(1.0f);
 
 			//moves the 3D object around the world
@@ -303,6 +317,10 @@ int main()
 
 		for (unsigned int i = 0; i < 1; i++)
 		{
+			// bind textures on corresponding texture units
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture1);
+
 			//initializes matrix to identity matrix
 			glm::mat4 model = glm::mat4(1.0f);
 
