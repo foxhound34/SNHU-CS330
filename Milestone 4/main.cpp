@@ -161,6 +161,7 @@ int main()
 	glGenBuffers(2, VBOs);
 	glGenBuffers(2, EBOs);
 
+//______________________________________________________________________________________________________________________________
 	//first container setup
 	glBindVertexArray(VAOs[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
@@ -179,6 +180,7 @@ int main()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
+//________________________________________________________________________________________________________________________________
 	//second container setup
 	glBindVertexArray(VAOs[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
@@ -196,6 +198,7 @@ int main()
 	//color attribute
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+//________________________________________________________________________________________________________________________________
 
 	//allows OpenGl to account for the depth of the container
 	glEnable(GL_DEPTH_TEST);
