@@ -1,10 +1,3 @@
-//---------------------------------------------------
-//
-// Jeff Phillips | Derek Bamford
-// CS-330 Computer Graphics and Visualization
-// Milestone 3-4
-// Pyramid//---------------------------------------------------
-//
 // Jeff Phillips | Derek Bamford
 // CS-330 Computer Graphics and Visualization
 // Milestone 3-4
