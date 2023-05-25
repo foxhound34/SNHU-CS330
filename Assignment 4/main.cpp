@@ -154,16 +154,34 @@ int main()
 	   6,
 	};
 
+	GLfloat pyramidVertices[] = {
+			// positions			 colors		
+		-0.5f,  0.0f,  0.5f,	0.5f, 0.0f, 1.0f,		
+		-0.5f,  0.0f, -0.5f,	1.0f, 5.0f, 0.0f,		
+		 0.5f,  0.0f, -0.5f,	0.0f, 1.0f, 0.5f,		
+		 0.5f,  0.0f,  0.5f,	0.5f, 0.0f, 1.0f,		
+		 0.0f,  0.8f,  0.0f,	1.0f, 0.5f, 0.0f,		
+	};
+
+	unsigned int pyramidIndices[] = {
+	   0, 1, 2,
+	   0, 2, 3,
+	   0, 1, 4,
+	   1, 2, 4,
+	   2, 3, 4,
+	   3, 0, 4
+	};
+
 	//The viewpoint goes from x = 0, y = 0, to x = 800, y = 600
 	glViewport(0, 0, WIDTH, HEIGHT);
 
 	// Vertex Array Object, Vertex Buffer Object, Element Array Object
 	// VAO must be generated befor the VBO
 	//In this example I am making two objects, one for each primative
-	GLuint VAOs[2], VBOs[2], EBOs[2];
-	glGenVertexArrays(2, VAOs);
-	glGenBuffers(2, VBOs);
-	glGenBuffers(2, EBOs);
+	GLuint VAOs[3], VBOs[3], EBOs[3];
+	glGenVertexArrays(3, VAOs);
+	glGenBuffers(3, VBOs);
+	glGenBuffers(3, EBOs);
 //-----------------------------------------------------------------------------------------------------------------
 	//first container setup
 	glBindVertexArray(VAOs[0]);
@@ -201,6 +219,25 @@ int main()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 //-----------------------------------------------------------------------------------------------------------------
+	//Third container setup
+	glBindVertexArray(VAOs[2]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
+
+	//Stores vertices in VBO
+	glBufferData(GL_ARRAY_BUFFER, sizeof(pyramidVertices), pyramidVertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[2]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(pyramidIndices), pyramidIndices, GL_STATIC_DRAW);
+
+	//configures so the OpenGl knows how to use the VBO, position attributes
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	//color attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+	//-----------------------------------------------------------------------------------------------------------------
+	
 	//allows OpenGl to account for the depth of the container
 	glEnable(GL_DEPTH_TEST);
 
@@ -273,6 +310,28 @@ int main()
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(tableIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
+		//render the Pyramid
+		//------------------------------------------------------------------------------------------------------------
+		glBindVertexArray(VAOs[2]);
+
+		for (unsigned int i = 0; i < 1; i++)
+		{
+			//initializes matrix to identity matrix
+			glm::mat4 model = glm::mat4(1.0f);
+
+			//moves the 3D object around the world
+			model = glm::translate(model, glm::vec3(0.0f, -5.0f, -13.0f));
+
+			//Rotates the objects over the degees and x, y, z axis
+			model = glm::rotate(model, glm::radians(.0f), glm::vec3(1.0, 0.0f, 0.0f));
+
+			//changes the size of the object
+			model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
+			ourShader.setMat4("model", model);
+
+			//draws the triangles
+			glDrawElements(GL_TRIANGLES, sizeof(pyramidIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		}
 
 		glfwSwapBuffers(window);
 
@@ -281,9 +340,9 @@ int main()
 	}
 
 	//De-allocates resources
-	glDeleteVertexArrays(2, VAOs);
-	glDeleteBuffers(2, VBOs);
-	glDeleteBuffers(2, EBOs);
+	glDeleteVertexArrays(3, VAOs);
+	glDeleteBuffers(3, VBOs);
+	glDeleteBuffers(3, EBOs);
 
 	glfwDestroyWindow(window); //Terminates the window
 	glfwTerminate(); //Terminates GLFW
