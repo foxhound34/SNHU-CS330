@@ -87,6 +87,7 @@ int main()
 
 	Shader ourShader("3.3.shader.vs", "3.3.shader.fs");
 
+	//Rubik's Cube
 	GLfloat squareVertices[] = {
 		// positions         // colors
 		-0.5f, -0.5f, -0.5f,  0.5f, 0.0f, 1.0f,  // A 0
@@ -134,6 +135,7 @@ int main()
 		22, 23, 20
 	};
 
+	//Countertop
 	GLfloat tableVertices[] = {
 		// positions         // colors
 		-2.0f,  -1.0f, -2.0f,  1.0f, 1.0f, 1.0f,
@@ -156,13 +158,13 @@ int main()
 	// Vertex Array Object, Vertex Buffer Object, Element Array Object
 	// VAO must be generated befor the VBO
 	//In this example I am making two objects, one for each triangle
-	GLuint VAOs[2], VBOs[2], EBOs[2];
-	glGenVertexArrays(2, VAOs);
-	glGenBuffers(2, VBOs);
-	glGenBuffers(2, EBOs);
+	GLuint VAOs[5], VBOs[5], EBOs[5];
+	glGenVertexArrays(5, VAOs);
+	glGenBuffers(5, VBOs);
+	glGenBuffers(5, EBOs);
 
-//______________________________________________________________________________________________________________________________
-	//first container setup
+	//______________________________________________________________________________________________________________________________
+		//Rubik's Cube setup
 	glBindVertexArray(VAOs[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
 
@@ -180,8 +182,8 @@ int main()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-//________________________________________________________________________________________________________________________________
-	//second container setup
+	//________________________________________________________________________________________________________________________________
+	//Countertop container setup
 	glBindVertexArray(VAOs[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
 
@@ -198,9 +200,9 @@ int main()
 	//color attribute
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-//________________________________________________________________________________________________________________________________
+	//________________________________________________________________________________________________________________________________
 
-	//allows OpenGl to account for the depth of the container
+		//allows OpenGl to account for the depth of the container
 	glEnable(GL_DEPTH_TEST);
 
 	//A loop so that the window won't be terminated immediately
@@ -219,13 +221,13 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		ourShader.use();
-		
+
 		//initializes a projection matrix (needed to be added after moving projectiosn to if statement
 		glm::mat4 projection;
 
 		// pass projection matrix to shader (note that in this case it could change every frame)
 		//Referenced from https://stackoverflow.com/questions/44710262/opengl-switching-between-ortho-and-perspecive-problems
-		if (!perspective) 
+		if (!perspective)
 		{
 			//perspective projection
 			projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 100.0f);
@@ -234,7 +236,7 @@ int main()
 		else
 			projection = glm::perspective(glm::radians(camera.Zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 
-			
+
 		ourShader.setMat4("projection", projection);
 
 		// camera/view transformation
@@ -273,7 +275,7 @@ int main()
 
 			//moves the 3D object around the world
 			model = glm::translate(model, glm::vec3(0.0f, -2.5f, -15.0f));
-			
+
 			//Rotates the objects over the degees and x, y, z axis
 			model = glm::rotate(model, glm::radians(360.0f), glm::vec3(1.0, 0.0f, 0.0f));
 
@@ -292,9 +294,9 @@ int main()
 	}
 
 	//De-allocates resources
-	glDeleteVertexArrays(2, VAOs);
-	glDeleteBuffers(2, VBOs);
-	glDeleteBuffers(2, EBOs);
+	glDeleteVertexArrays(5, VAOs);
+	glDeleteBuffers(5, VBOs);
+	glDeleteBuffers(5, EBOs);
 
 	glfwDestroyWindow(window); //Terminates the window
 	glfwTerminate(); //Terminates GLFW
@@ -303,7 +305,7 @@ int main()
 
 void processInput(GLFWwindow* window)
 {
-	
+
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
