@@ -126,6 +126,34 @@ int main()
 	   6,
 	};
 
+	// Keyboard
+	GLfloat keyboardVertices[] = {
+		// positions         // colors
+		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+	};
+
+	unsigned int keyboardIndices[] = {
+	    0, 1, 3, // first triangle
+        1, 2, 3  // second triangle
+	};
+
+	// screen
+	GLfloat screenVertices[] = {
+		// positions         // colors
+		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+	};
+
+	unsigned int screenIndices[] = {
+		0, 1, 3, // first triangle
+		1, 2, 3  // second triangle
+	};
+
 
 	//The viewpoint goes from x = 0, y = 0, to x = 800, y = 600
 	glViewport(0, 0, WIDTH, HEIGHT);
@@ -133,10 +161,10 @@ int main()
 	// Vertex Array Object, Vertex Buffer Object, Element Array Object
 	// VAO must be generated befor the VBO
 	//In this example I am making two objects, one for each triangle
-	GLuint VAOs[2], VBOs[2], EBOs[2];
-	glGenVertexArrays(2, VAOs);
-	glGenBuffers(2, VBOs);
-	glGenBuffers(2, EBOs);
+	GLuint VAOs[5], VBOs[5], EBOs[5];
+	glGenVertexArrays(5, VAOs);
+	glGenBuffers(5, VBOs);
+	glGenBuffers(5, EBOs);
 
 //______________________________________________________________________________________________________________________________
 	//Pyramid container setup
@@ -183,11 +211,55 @@ int main()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 	//______________________________________________________________________________________________________________________________________________
+	//Countertop keyboard setup
+	glBindVertexArray(VAOs[2]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
+
+	//Stores vertices in VBO
+	glBufferData(GL_ARRAY_BUFFER, sizeof(keyboardVertices), keyboardVertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[2]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(keyboardIndices), keyboardIndices, GL_STATIC_DRAW);
+
+	//configures so the OpenGl knows how to use the VBO, position attributes
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	//color attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	//texture attribute
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+//______________________________________________________________________________________________________________________________________________________
+
+	//Countertop screen setup
+	glBindVertexArray(VAOs[3]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOs[3]);
+
+	//Stores vertices in VBO
+	glBufferData(GL_ARRAY_BUFFER, sizeof(screenVertices), screenVertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[3]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(screenIndices), screenIndices, GL_STATIC_DRAW);
+
+	//configures so the OpenGl knows how to use the VBO, position attributes
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	//color attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	//texture attribute
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
 	
-	//allows OpenGl to account for the depth of the container
+//allows OpenGl to account for the depth of the container
 	glEnable(GL_DEPTH_TEST);
 
-	unsigned int texture1, texture2;
+	unsigned int texture1, texture2, texture3, texture4;
 	// texture 1
 	// ---------
 	glGenTextures(1, &texture1);
@@ -238,12 +310,39 @@ int main()
 	}
 	stbi_image_free(data2);
 
+	// texture 3
+	// ---------
+	glGenTextures(1, &texture3);
+	glBindTexture(GL_TEXTURE_2D, texture3);
+	// set the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// load image, create texture and generate mipmaps
+
+	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+	unsigned char* data3 = stbi_load("Keyboard.jpg", &width, &height, &nrChannels, 0);
+	if (data3)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data3);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data3);
+
+
 
 	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
 	// -------------------------------------------------------------------------------------------
 	ourShader.use();
 	ourShader.setInt("texture1", 0);
 	ourShader.setInt("texture2", 0);
+	ourShader.setInt("texture3", 0);
 
 
 	//A loop so that the window won't be terminated immediately
@@ -297,10 +396,10 @@ int main()
 			glm::mat4 model = glm::mat4(1.0f);
 
 			//moves the 3D object around the world
-			model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
+			model = glm::translate(model, glm::vec3(-3.5f, -4.3f, -13.0f));
 
 			//Rotates the objects over the degees and x, y, z axis
-			model = glm::rotate(model, glm::radians(10.0f), glm::vec3(0.0, 1.0f, 0.0f));
+			model = glm::rotate(model, glm::radians(100.0f), glm::vec3(0.0, 1.0f, 0.0f));
 
 			//changes the size of the object
 			model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
@@ -322,17 +421,43 @@ int main()
 			glm::mat4 model = glm::mat4(1.0f);
 
 			//moves the 3D object around the world
-			model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+			model = glm::translate(model, glm::vec3(0.0f, -0.3f, -13.0f));
 
 			//Rotates the objects over the degees and x, y, z axis
-			model = glm::rotate(model, glm::radians(10.0f), glm::vec3(0.0, 1.0f, 0.0f));
+			model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0, 0.0f, 0.0f));
 
 			//changes the size of the object
-			model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+			model = glm::scale(model, glm::vec3(6.0f, 5.0f, 3.0f));
 
 			ourShader.setMat4("model", model);
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(tableIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		}
+
+		//render the keyboard
+		glBindVertexArray(VAOs[2]);
+
+		for (unsigned int i = 0; i < 1; i++)
+
+		{
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture3);
+			
+			//initializes matrix to identity matrix
+			glm::mat4 model = glm::mat4(1.0f);
+
+			//moves the 3D object around the world
+			model = glm::translate(model, glm::vec3(1.0f, -5.25f, -13.5f));
+
+			//Rotates the objects over the degees and x, y, z axis
+			model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0, 0.0f, 0.0f));
+
+			//changes the size of the object
+			model = glm::scale(model, glm::vec3(6.0f, 5.0f, 5.0f));
+
+			ourShader.setMat4("model", model);
+			//draws the triangles
+			glDrawElements(GL_TRIANGLES, sizeof(keyboardIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
 
 		glfwSwapBuffers(window);
