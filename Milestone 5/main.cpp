@@ -323,7 +323,7 @@ int main()
 	// load image, create texture and generate mipmaps
 
 	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-	unsigned char* data3 = stbi_load("Keyboard.jpg", &width, &height, &nrChannels, 0);
+	unsigned char* data3 = stbi_load("keyboard.jpg", &width, &height, &nrChannels, 0);
 	if (data3)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data3);
@@ -335,6 +335,31 @@ int main()
 	}
 	stbi_image_free(data3);
 
+	// texture 4
+	// ---------
+	glGenTextures(1, &texture4);
+	glBindTexture(GL_TEXTURE_2D, texture4);
+	// set the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// load image, create texture and generate mipmaps
+
+	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+	unsigned char* data4 = stbi_load("Screen2.jpg", &width, &height, &nrChannels, 0);
+	if (data4)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data4);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data4);
+
 
 
 	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
@@ -343,6 +368,7 @@ int main()
 	ourShader.setInt("texture1", 0);
 	ourShader.setInt("texture2", 0);
 	ourShader.setInt("texture3", 0);
+	ourShader.setInt("texture4", 0);
 
 
 	//A loop so that the window won't be terminated immediately
@@ -460,6 +486,32 @@ int main()
 			glDrawElements(GL_TRIANGLES, sizeof(keyboardIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
 
+		//render the keyboard
+		glBindVertexArray(VAOs[3]);
+
+		for (unsigned int i = 0; i < 1; i++)
+
+		{
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture4);
+
+			//initializes matrix to identity matrix
+			glm::mat4 model = glm::mat4(1.0f);
+
+			//moves the 3D object around the world
+			model = glm::translate(model, glm::vec3(1.0f, -3.5f, -17.75f));
+
+			//Rotates the objects over the degees and x, y, z axis
+			model = glm::rotate(model, glm::radians(-45.0f), glm::vec3(1.0, 0.0f, 0.0f));
+
+			//changes the size of the object
+			model = glm::scale(model, glm::vec3(6.0f, 5.0f, 5.0f));
+
+			ourShader.setMat4("model", model);
+			//draws the triangles
+			glDrawElements(GL_TRIANGLES, sizeof(screenIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		}
+
 		glfwSwapBuffers(window);
 
 		//processes all GLFW events other than closing
@@ -467,9 +519,9 @@ int main()
 	}
 
 	//De-allocates resources
-	glDeleteVertexArrays(2, VAOs);
-	glDeleteBuffers(2, VBOs);
-	glDeleteBuffers(2, EBOs);
+	glDeleteVertexArrays(5, VAOs);
+	glDeleteBuffers(5, VBOs);
+	glDeleteBuffers(5, EBOs);
 
 	glfwDestroyWindow(window); //Terminates the window
 	glfwTerminate(); //Terminates GLFW
