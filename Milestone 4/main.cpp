@@ -152,6 +152,59 @@ int main()
 	   6,
 	};
 
+	//Pyramid
+	GLfloat pyramidVertices[] = {
+		// positions			 colors		
+	-0.5f,  0.0f,  0.5f,	0.5f, 0.0f, 1.0f,
+	-0.5f,  0.0f, -0.5f,	1.0f, 5.0f, 0.0f,
+	 0.5f,  0.0f, -0.5f,	0.0f, 1.0f, 0.5f,
+	 0.5f,  0.0f,  0.5f,	0.5f, 0.0f, 1.0f,
+	 0.0f,  0.8f,  0.0f,	1.0f, 0.5f, 0.0f,
+	};
+
+	unsigned int pyramidIndices[] = {
+	   0, 1, 2,
+	   0, 2, 3,
+	   0, 1, 4,
+	   1, 2, 4,
+	   2, 3, 4,
+	   3, 0, 4
+	};
+
+	//Computer Screen
+	GLfloat screenVertices[] = {
+		// positions         // colors
+		-2.0f,  -1.0f, -2.0f,  0.0f, 0.0f, 1.0f,
+		 2.0f,  -1.0f, -2.0f,  0.0f, 0.0f, 1.0f,
+		 2.0f,  -1.0f,  2.0f,  0.0f, 0.0f, 1.0f,
+		 2.0f,  -1.0f,  2.0f,  0.0f, 0.0f, 1.0f,
+		-2.0f,  -1.0f,  2.0f,  0.0f, 0.0f, 1.0f,
+		-2.0f,  -1.0f, -2.0f,  0.0f, 0.0f, 1.0f,
+	};
+
+	unsigned int screenIndices[] = {
+	   0, 1, 2,  
+	   3, 4, 5,
+	   6,
+	};
+
+	// Keyboard
+	GLfloat keyboardVertices[] = {
+		// positions         // colors
+		-2.0f,  -1.0f, -2.0f,  0.0f, 1.0f, 0.0f,
+		 2.0f,  -1.0f, -2.0f,  0.0f, 1.0f, 0.0f,
+		 2.0f,  -1.0f,  2.0f,  0.0f, 1.0f, 0.0f,
+		 2.0f,  -1.0f,  2.0f,  0.0f, 1.0f, 0.0f,
+		-2.0f,  -1.0f,  2.0f,  0.0f, 1.0f, 0.0f,
+		-2.0f,  -1.0f, -2.0f,  0.0f, 1.0f, 0.0f,
+	};
+
+	unsigned int keyboardIndices[] = {
+	   0, 1, 2,  
+	   3, 4, 5,
+	   6,
+	};
+
 	//The viewpoint goes from x = 0, y = 0, to x = 800, y = 600
 	glViewport(0, 0, WIDTH, HEIGHT);
 
@@ -162,6 +215,8 @@ int main()
 	glGenVertexArrays(5, VAOs);
 	glGenBuffers(5, VBOs);
 	glGenBuffers(5, EBOs);
+
+
 
 	//______________________________________________________________________________________________________________________________
 		//Rubik's Cube setup
@@ -182,7 +237,7 @@ int main()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	//________________________________________________________________________________________________________________________________
+//________________________________________________________________________________________________________________________________
 	//Countertop container setup
 	glBindVertexArray(VAOs[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
@@ -200,8 +255,62 @@ int main()
 	//color attribute
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-	//________________________________________________________________________________________________________________________________
+//________________________________________________________________________________________________________________________________
+	//Pyramid container setup
+	glBindVertexArray(VAOs[2]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
 
+	//Stores vertices in VBO
+	glBufferData(GL_ARRAY_BUFFER, sizeof(pyramidVertices), pyramidVertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[2]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(pyramidIndices), pyramidIndices, GL_STATIC_DRAW);
+
+	//configures so the OpenGl knows how to use the VBO, position attributes
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	//color attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+//________________________________________________________________________________________________________________________________
+	//Computer Screen container setup
+	glBindVertexArray(VAOs[3]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOs[3]);
+
+	//Stores vertices in VBO
+	glBufferData(GL_ARRAY_BUFFER, sizeof(screenVertices), screenVertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[3]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(screenIndices), screenIndices, GL_STATIC_DRAW);
+
+	//configures so the OpenGl knows how to use the VBO, position attributes
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	//color attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+//___________________________________________________________________________________________________________________________________
+	//Computer Keyboard container setup
+	glBindVertexArray(VAOs[4]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOs[4]);
+
+	//Stores vertices in VBO
+	glBufferData(GL_ARRAY_BUFFER, sizeof(keyboardVertices), keyboardVertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[4]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(keyboardIndices), keyboardIndices, GL_STATIC_DRAW);
+
+	//configures so the OpenGl knows how to use the VBO, position attributes
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	//color attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+//______________________________________________________________________________________________________________________________________________
 		//allows OpenGl to account for the depth of the container
 	glEnable(GL_DEPTH_TEST);
 
@@ -243,6 +352,7 @@ int main()
 		glm::mat4 view = camera.GetViewMatrix();
 		ourShader.setMat4("view", view);
 
+//__________________________________________________________________________________________________________________________________________
 		//render the Rubik's cube
 		glBindVertexArray(VAOs[0]);
 
@@ -252,7 +362,7 @@ int main()
 			glm::mat4 model = glm::mat4(1.0f);
 
 			//moves the 3D object around the world
-			model = glm::translate(model, glm::vec3(-3.5f, -5.0f, -13.0f));
+			model = glm::translate(model, glm::vec3(-3.5f, -4.8f, -13.0f));
 
 			//Rotates the objects over the degees and x, y, z axis
 			model = glm::rotate(model, glm::radians(10.0f), glm::vec3(0.0, 1.0f, 0.0f));
@@ -274,17 +384,81 @@ int main()
 			glm::mat4 model = glm::mat4(1.0f);
 
 			//moves the 3D object around the world
-			model = glm::translate(model, glm::vec3(0.0f, -2.5f, -15.0f));
+			model = glm::translate(model, glm::vec3(0.0f, -0.3f, -13.0f));
 
 			//Rotates the objects over the degees and x, y, z axis
-			model = glm::rotate(model, glm::radians(360.0f), glm::vec3(1.0, 0.0f, 0.0f));
+			model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0, 0.0f, 0.0f));
 
 			//changes the size of the object
-			model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
+			model = glm::scale(model, glm::vec3(6.0f, 5.0f, 3.0f));
 			ourShader.setMat4("model", model);
 
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(tableIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		}
+
+		//render the Pyramid cube
+		glBindVertexArray(VAOs[2]);
+
+		for (unsigned int i = 0; i < 1; i++)
+
+		{   //initializes matrix to identity matrix
+			glm::mat4 model = glm::mat4(1.0f);
+
+			//moves the 3D object around the world
+			model = glm::translate(model, glm::vec3(-3.5f, -4.3f, -13.0f));
+
+			//Rotates the objects over the degees and x, y, z axis
+			model = glm::rotate(model, glm::radians(100.0f), glm::vec3(0.0, 1.0f, 0.0f));
+
+			//changes the size of the object
+			model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+			ourShader.setMat4("model", model);
+			//draws the triangles
+			glDrawElements(GL_TRIANGLES, sizeof(pyramidIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		}
+
+		//render the computer Screen
+		glBindVertexArray(VAOs[3]);
+
+		for (unsigned int i = 0; i < 1; i++)
+
+		{   //initializes matrix to identity matrix
+			glm::mat4 model = glm::mat4(1.0f);
+
+			//moves the 3D object around the world
+			model = glm::translate(model, glm::vec3(1.0f, -1.95f, -17.32f));
+
+			//Rotates the objects over the degees and x, y, z axis
+			model = glm::rotate(model, glm::radians(55.0f), glm::vec3(1.0, 0.0f, 0.0f));
+
+			//changes the size of the object
+			model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
+			ourShader.setMat4("model", model);
+
+			//draws the triangles
+			glDrawElements(GL_TRIANGLES, sizeof(screenIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		}
+		//render the keyboard
+		glBindVertexArray(VAOs[4]);
+
+		for (unsigned int i = 0; i < 1; i++)
+
+		{   //initializes matrix to identity matrix
+			glm::mat4 model = glm::mat4(1.0f);
+
+			//moves the 3D object around the world
+			model = glm::translate(model, glm::vec3(1.0f, -3.75f, -13.855f));
+
+			//Rotates the objects over the degees and x, y, z axis
+			model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0, 0.0f, 0.0f));
+
+			//changes the size of the object
+			model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
+
+			ourShader.setMat4("model", model);
+			//draws the triangles
+			glDrawElements(GL_TRIANGLES, sizeof(keyboardIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
 
 		glfwSwapBuffers(window);
