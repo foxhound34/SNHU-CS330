@@ -91,29 +91,65 @@ int main()
 	Shader ourShader("3.3.shader.vs", "3.3.shader.fs");
 
 
-	GLfloat pyramidVertices[] = {
-		// positions			 colors				texture
-	-0.5f,  0.0f,  0.5f,	0.5f, 0.0f, 1.0f,		0.0f, 0.0f,
-	-0.5f,  0.0f, -0.5f,	1.0f, 5.0f, 0.0f,		5.0f, 0.0f, //left face
-	 0.5f,  0.0f, -0.5f,	0.0f, 1.0f, 0.5f,		5.0f, 5.0f, //bottom face
-	 0.5f,  0.0f,  0.5f,	0.5f, 0.0f, 1.0f,		5.0f, 0.0f, //front face
-	 0.0f,  0.8f,  0.0f,	1.0f, 0.5f, 0.0f,		2.0f, 5.0f,
+	//Rubik's Cube
+	GLfloat squareVertices[] = {
+		// positions         // colors
+
+		//Left and Right Side
+		-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 0.0f, // 0 upper left
+		 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 0.0f, //1 upper right
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 1.0f, //2 bottom left
+		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 1.0f, //3 bottom right
+		-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 0.0f, //4 upper left
+		 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 0.0f, //5 upper right
+		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 1.0f, //6 bottom left
+		-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 1.0f, //7 bottom right
+
+		//Front and Back
+		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 1.0f, //8 upper left
+		-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 1.0f, //9 upper right
+		-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 0.0f, //10 bottom left
+		-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 0.0f, //11 bottom right
+		 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 1.0f, //12 upper left
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 1.0f, //13 upper right
+		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 0.0f, //14 bottom left
+		 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 0.0f, //15 bottom right
+
+		 //Top and Bottom
+		-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 0.0f, //upper left 16
+		 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 1.0f, //bottom right 17
+		 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 1.0f, //upper right 18
+		-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 1.0f, //bottom right 19
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 0.0f, //upper left 20
+		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 0.0f, //upper right 21
+		-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 1.0f, //bottom left 22
+		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 1.0f, //bottom right 23
 	};
 
-	unsigned int pyramidIndices[] = {
-	   0, 1, 2,
-	   0, 2, 3,
-	   0, 1, 4,
-	   1, 2, 4,
-	   2, 3, 4,
-	   3, 0, 4
+	unsigned int squareIndices[] = {
+		
+		
+		0, 3, 2,
+		2, 1, 0,
+		4, 5, 6,
+		6, 7 ,4,
+		// left and right
+		11, 8, 9,
+		9, 10, 11,
+		12, 13, 14,
+		14, 15, 12,
+		// bottom and top
+		16, 17, 18,
+		18, 19, 16,
+		20, 21, 22,
+		22, 23, 20
 	};
 
 	//Countertop
 	GLfloat tableVertices[] = {
 		// positions			// colors			texture
 		-2.0f,  -1.0f, -2.0f,	1.0f, 1.0f, 1.0f,	0.0f, 0.0f,
-		 2.0f,  -1.0f, -2.0f,	1.0f, 1.0f, 1.0f,	0.0f, 1.0f,
+		 2.0f,  -1.0f, -2.0f,	1.0f, 1.0f, 1.0f,	1.0f, 0.0f,
 		 2.0f,  -1.0f,  2.0f,	1.0f, 1.0f, 1.0f,	1.0f, 1.0f,
 		 2.0f,  -1.0f,  2.0f,	1.0f, 1.0f, 1.0f,	1.0f, 0.0f,
 		-2.0f,  -1.0f,  2.0f,	1.0f, 1.0f, 1.0f,	0.0f, 0.0f,
@@ -123,7 +159,7 @@ int main()
 	unsigned int tableIndices[] = {
 	   0, 1, 2,   // first triangle
 	   3, 4, 5,
-	   6,
+	   6
 	};
 
 	// Keyboard
@@ -136,8 +172,8 @@ int main()
 	};
 
 	unsigned int keyboardIndices[] = {
-	    0, 1, 3, // first triangle
-        1, 2, 3  // second triangle
+		0, 1, 3, // first triangle
+		1, 2, 3  // second triangle
 	};
 
 	// screen
@@ -166,16 +202,16 @@ int main()
 	glGenBuffers(5, VBOs);
 	glGenBuffers(5, EBOs);
 
-//______________________________________________________________________________________________________________________________
-	//Pyramid container setup
+	//______________________________________________________________________________________________________________________________
+		//Pyramid container setup
 	glBindVertexArray(VAOs[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
 
 	//Stores vertices in VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(pyramidVertices), pyramidVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(squareVertices), squareVertices, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[0]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(pyramidIndices), pyramidIndices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(squareIndices), squareIndices, GL_STATIC_DRAW);
 
 	//configures so the OpenGl knows how to use the VBO, position attributes
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
@@ -188,8 +224,8 @@ int main()
 	//texture attribute
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
-//________________________________________________________________________________________________________________________________
-	//Countertop container setup
+	//________________________________________________________________________________________________________________________________
+		//Countertop container setup
 	glBindVertexArray(VAOs[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
 
@@ -232,9 +268,9 @@ int main()
 	//texture attribute
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
-//______________________________________________________________________________________________________________________________________________________
+	//______________________________________________________________________________________________________________________________________________________
 
-	//Countertop screen setup
+		//Countertop screen setup
 	glBindVertexArray(VAOs[3]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[3]);
 
@@ -255,8 +291,8 @@ int main()
 	//texture attribute
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
-	
-//allows OpenGl to account for the depth of the container
+
+	//allows OpenGl to account for the depth of the container
 	glEnable(GL_DEPTH_TEST);
 
 	unsigned int texture1, texture2, texture3, texture4;
@@ -273,7 +309,7 @@ int main()
 	// load image, create texture and generate mipmaps
 	int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-	unsigned char* data = stbi_load("Brick.jpg", &width, &height, &nrChannels, 0);
+	unsigned char* data = stbi_load("Cube2.jpg", &width, &height, &nrChannels, 0);
 	if (data)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -348,7 +384,7 @@ int main()
 	// load image, create texture and generate mipmaps
 
 	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-	unsigned char* data4 = stbi_load("Screen2.jpg", &width, &height, &nrChannels, 0);
+	unsigned char* data4 = stbi_load("screen2.jpg", &width, &height, &nrChannels, 0);
 	if (data4)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data4);
@@ -409,7 +445,7 @@ int main()
 		glm::mat4 view = camera.GetViewMatrix();
 		ourShader.setMat4("view", view);
 
-		//render the Pyramid
+		//render the Rubik's Cube
 		glBindVertexArray(VAOs[0]);
 
 		for (unsigned int i = 0; i < 1; i++)
@@ -422,7 +458,7 @@ int main()
 			glm::mat4 model = glm::mat4(1.0f);
 
 			//moves the 3D object around the world
-			model = glm::translate(model, glm::vec3(-3.5f, -4.3f, -13.0f));
+			model = glm::translate(model, glm::vec3(-3.5f, -4.7f, -13.0f));
 
 			//Rotates the objects over the degees and x, y, z axis
 			model = glm::rotate(model, glm::radians(100.0f), glm::vec3(0.0, 1.0f, 0.0f));
@@ -432,7 +468,7 @@ int main()
 
 			ourShader.setMat4("model", model);
 			//draws the triangles
-			glDrawElements(GL_TRIANGLES, sizeof(pyramidIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, sizeof(squareIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
 		//render the countertop cube
 		glBindVertexArray(VAOs[1]);
@@ -468,7 +504,7 @@ int main()
 		{
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture3);
-			
+
 			//initializes matrix to identity matrix
 			glm::mat4 model = glm::mat4(1.0f);
 
