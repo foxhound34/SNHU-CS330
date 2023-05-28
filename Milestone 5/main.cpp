@@ -566,10 +566,11 @@ int main()
 
 void processInput(GLFWwindow* window)
 {
-
+	//Control ability to escape the program
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
+	//controls the movement of the camera
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		camera.ProcessKeyboard(FORWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -583,6 +584,7 @@ void processInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 		camera.ProcessKeyboard(DOWN, deltaTime);
 
+	//Controls the perspective of the camera
 	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
 		perspective = false;
 
