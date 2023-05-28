@@ -2,8 +2,8 @@
 //
 // Jeff Phillips | Derek Bamford
 // CS-330 Computer Graphics and Visualization
-// Milestone 4-5
-// Interactivity in a 3D Scene
+// Assignment 4-3
+// Basic Camera Movement
 //
 //---------------------------------------------------
 
@@ -25,9 +25,9 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 void processInput(GLFWwindow* window);
 
+//Sets the Height and Width of the window
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
-float MovementSpeed = 5.0f;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -35,11 +35,8 @@ float lastX = WIDTH / 2.0f;
 float lastY = HEIGHT / 2.0f;
 bool firstMouse = true;
 
-//sets the perspective
-bool perspective = false;
-
 // timing
-float deltaTime = 0.0f;	// time between current frame and last frame
+float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 int main()
@@ -58,7 +55,7 @@ int main()
 #endif
 
 	//Builds a window (Width, Height, Title, Full screen, <reasons>)
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Milestone 4_Bamford", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Assignment 4_Bamford", NULL, NULL);
 
 	//error checking for window
 	if (window == NULL)
@@ -76,6 +73,13 @@ int main()
 	// tell GLFW to capture our mouse
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+	// glad: load all OpenGL function pointers
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		std::cout << "Failed to initialize GLAD" << std::endl;
+		return -1;
+	}
+
 	//Tells GLFW we would like to use the window we just created, because it is stupid
 	glfwMakeContextCurrent(window);
 
@@ -87,7 +91,6 @@ int main()
 
 	Shader ourShader("3.3.shader.vs", "3.3.shader.fs");
 
-	//Rubik's Cube
 	GLfloat squareVertices[] = {
 		// positions         // colors
 		-0.5f, -0.5f, -0.5f,  0.5f, 0.0f, 1.0f,  // A 0
@@ -135,7 +138,6 @@ int main()
 		22, 23, 20
 	};
 
-	//Countertop
 	GLfloat tableVertices[] = {
 		// positions         // colors
 		-2.0f,  -1.0f, -2.0f,  1.0f, 1.0f, 1.0f,
@@ -147,19 +149,18 @@ int main()
 	};
 
 	unsigned int tableIndices[] = {
-	   0, 1, 2,   // first triangle
+	   0, 1, 2, 
 	   3, 4, 5,
 	   6,
 	};
 
-	//Pyramid
 	GLfloat pyramidVertices[] = {
-		// positions			 colors		
-	-0.5f,  0.0f,  0.5f,	0.5f, 0.0f, 1.0f,
-	-0.5f,  0.0f, -0.5f,	1.0f, 5.0f, 0.0f,
-	 0.5f,  0.0f, -0.5f,	0.0f, 1.0f, 0.5f,
-	 0.5f,  0.0f,  0.5f,	0.5f, 0.0f, 1.0f,
-	 0.0f,  0.8f,  0.0f,	1.0f, 0.5f, 0.0f,
+			// positions			 colors		
+		-0.5f,  0.0f,  0.5f,	0.5f, 0.0f, 1.0f,		
+		-0.5f,  0.0f, -0.5f,	1.0f, 5.0f, 0.0f,		
+		 0.5f,  0.0f, -0.5f,	0.0f, 1.0f, 0.5f,		
+		 0.5f,  0.0f,  0.5f,	0.5f, 0.0f, 1.0f,		
+		 0.0f,  0.8f,  0.0f,	1.0f, 0.5f, 0.0f,		
 	};
 
 	unsigned int pyramidIndices[] = {
@@ -176,14 +177,13 @@ int main()
 
 	// Vertex Array Object, Vertex Buffer Object, Element Array Object
 	// VAO must be generated befor the VBO
-	//In this example I am making two objects, one for each triangle
-	GLuint VAOs[5], VBOs[5], EBOs[5];
-	glGenVertexArrays(5, VAOs);
-	glGenBuffers(5, VBOs);
-	glGenBuffers(5, EBOs);
-
-	//______________________________________________________________________________________________________________________________
-		//Rubik's Cube setup
+	//In this example I am making two objects, one for each primative
+	GLuint VAOs[3], VBOs[3], EBOs[3];
+	glGenVertexArrays(3, VAOs);
+	glGenBuffers(3, VBOs);
+	glGenBuffers(3, EBOs);
+//-----------------------------------------------------------------------------------------------------------------
+	//first container setup
 	glBindVertexArray(VAOs[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
 
@@ -200,9 +200,8 @@ int main()
 	//color attribute
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-
-	//________________________________________________________________________________________________________________________________
-	//Countertop container setup
+//-----------------------------------------------------------------------------------------------------------------
+	//second container setup
 	glBindVertexArray(VAOs[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
 
@@ -219,8 +218,8 @@ int main()
 	//color attribute
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-	//________________________________________________________________________________________________________________________________
-	//Pyramid container setup
+//-----------------------------------------------------------------------------------------------------------------
+	//Third container setup
 	glBindVertexArray(VAOs[2]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
 
@@ -237,15 +236,14 @@ int main()
 	//color attribute
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-	//________________________________________________________________________________________________________________________________
-
-		//allows OpenGl to account for the depth of the container
+	//-----------------------------------------------------------------------------------------------------------------
+	
+	//allows OpenGl to account for the depth of the container
 	glEnable(GL_DEPTH_TEST);
 
 	//A loop so that the window won't be terminated immediately
 	while (!glfwWindowShouldClose(window))
 	{
-
 		// per-frame time logic
 		float currentFrame = static_cast<float>(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
@@ -259,21 +257,8 @@ int main()
 
 		ourShader.use();
 
-		//initializes a projection matrix (needed to be added after moving projectiosn to if statement
-		glm::mat4 projection;
-
 		// pass projection matrix to shader (note that in this case it could change every frame)
-		//Referenced from https://stackoverflow.com/questions/44710262/opengl-switching-between-ortho-and-perspecive-problems
-		if (!perspective)
-		{
-			//perspective projection
-			projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 100.0f);
-		}
-		//ortho projection
-		else
-			projection = glm::perspective(glm::radians(camera.Zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
-
-
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 		ourShader.setMat4("projection", projection);
 
 		// camera/view transformation
@@ -281,6 +266,7 @@ int main()
 		ourShader.setMat4("view", view);
 
 		//render the Rubik's cube
+		//----------------------------------------------------------------------------------------------------------
 		glBindVertexArray(VAOs[0]);
 
 		for (unsigned int i = 0; i < 1; i++)
@@ -303,6 +289,7 @@ int main()
 		}
 
 		//render the countertop
+		//------------------------------------------------------------------------------------------------------------
 		glBindVertexArray(VAOs[1]);
 
 		for (unsigned int i = 0; i < 1; i++)
@@ -312,9 +299,9 @@ int main()
 
 			//moves the 3D object around the world
 			model = glm::translate(model, glm::vec3(0.0f, -2.5f, -15.0f));
-
+			
 			//Rotates the objects over the degees and x, y, z axis
-			model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0, 0.0f, 0.0f));
+			model = glm::rotate(model, glm::radians(360.0f), glm::vec3(1.0, 0.0f, 0.0f));
 
 			//changes the size of the object
 			model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
@@ -323,25 +310,25 @@ int main()
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(tableIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
-
-		//render the Pyramid cube
+		//render the Pyramid
+		//------------------------------------------------------------------------------------------------------------
 		glBindVertexArray(VAOs[2]);
 
 		for (unsigned int i = 0; i < 1; i++)
-
-		{   //initializes matrix to identity matrix
+		{
+			//initializes matrix to identity matrix
 			glm::mat4 model = glm::mat4(1.0f);
 
 			//moves the 3D object around the world
-			model = glm::translate(model, glm::vec3(-3.5f, -4.5f, -13.0f));
+			model = glm::translate(model, glm::vec3(0.0f, -5.0f, -13.0f));
 
 			//Rotates the objects over the degees and x, y, z axis
-			model = glm::rotate(model, glm::radians(100.0f), glm::vec3(0.0, 1.0f, 0.0f));
+			model = glm::rotate(model, glm::radians(.0f), glm::vec3(1.0, 0.0f, 0.0f));
 
 			//changes the size of the object
-			model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-
+			model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
 			ourShader.setMat4("model", model);
+
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(pyramidIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
@@ -353,9 +340,9 @@ int main()
 	}
 
 	//De-allocates resources
-	glDeleteVertexArrays(5, VAOs);
-	glDeleteBuffers(5, VBOs);
-	glDeleteBuffers(5, EBOs);
+	glDeleteVertexArrays(3, VAOs);
+	glDeleteBuffers(3, VBOs);
+	glDeleteBuffers(3, EBOs);
 
 	glfwDestroyWindow(window); //Terminates the window
 	glfwTerminate(); //Terminates GLFW
@@ -364,10 +351,11 @@ int main()
 
 void processInput(GLFWwindow* window)
 {
-
+	//Allows user to exit by pressing ESC
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
+	//Controls camera movement with keyboard inputs
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		camera.ProcessKeyboard(FORWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -380,12 +368,6 @@ void processInput(GLFWwindow* window)
 		camera.ProcessKeyboard(UP, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 		camera.ProcessKeyboard(DOWN, deltaTime);
-
-	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
-		perspective = false;
-
-	else
-		perspective = true;
 }
 
 // This method handles the resize of the window
