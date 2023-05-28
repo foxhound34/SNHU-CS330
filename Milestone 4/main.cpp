@@ -2,8 +2,8 @@
 //
 // Jeff Phillips | Derek Bamford
 // CS-330 Computer Graphics and Visualization
-// Milestone 5
-// Texturing Objects in a 3D Scene
+// Milestone 4-5
+// Interactivity in a 3D Scene
 //
 //---------------------------------------------------
 
@@ -16,9 +16,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 
 #include<iostream>
 
@@ -61,7 +58,7 @@ int main()
 #endif
 
 	//Builds a window (Width, Height, Title, Full screen, <reasons>)
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Milestone 5 Bamford", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Milestone 4_Bamford", NULL, NULL);
 
 	//error checking for window
 	if (window == NULL)
@@ -90,36 +87,35 @@ int main()
 
 	Shader ourShader("3.3.shader.vs", "3.3.shader.fs");
 
-
 	//Rubik's Cube
 	GLfloat squareVertices[] = {
 		// positions         // colors
-		-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 0.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.5f, 0.0f, 1.0f,  // A 0
+		 0.5f, -0.5f, -0.5f,  0.5f, 0.0f, 1.0f,  // B 1
+		 0.5f,  0.5f, -0.5f,  0.5f, 0.0f, 1.0f,  // C 2
+		-0.5f,  0.5f, -0.5f,  0.5f, 0.0f, 1.0f, // D 3
+		-0.5f, -0.5f,  0.5f,  0.5f, 0.0f, 1.0f,  // E 4
+		 0.5f, -0.5f,  0.5f,  0.5f, 0.0f, 1.0f,   // F 5
+		 0.5f,  0.5f,  0.5f,  0.5f, 0.0f, 1.0f,  // G 6
+		-0.5f,  0.5f,  0.5f,  0.5f, 0.0f, 1.0f,   // H 7
 
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  1.0f, 0.5f, 0.0f,  // D 8
+		-0.5f, -0.5f, -0.5f,  1.0f, 0.5f, 0.0f,  // A 9
+		-0.5f, -0.5f,  0.5f,  1.0f, 0.5f, 0.0f,  // E 10
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.5f, 0.0f,  // H 11
+		 0.5f, -0.5f, -0.5f,  1.0f, 0.5f, 0.0f,   // B 12
+		 0.5f,  0.5f, -0.5f,  1.0f, 0.5f, 0.0f,  // C 13
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.5f, 0.0f,   // G 14
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.5f, 0.0f,  // F 15
 
-		-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 0.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,		1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.5f,  // A 16
+		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.5f,   // B 17
+		 0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 0.5f,   // F 18
+		-0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 0.5f,  // E 19
+		 0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.5f,  // C 20
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.5f,  // D 21
+		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.5f,  // H 22
+		 0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.5f,  // G 23
 	};
 
 	unsigned int squareIndices[] = {
@@ -141,13 +137,13 @@ int main()
 
 	//Countertop
 	GLfloat tableVertices[] = {
-		// positions			// colors			texture
-		-2.0f,  -1.0f, -2.0f,	1.0f, 1.0f, 1.0f,	0.0f, 0.0f,
-		 2.0f,  -1.0f, -2.0f,	1.0f, 1.0f, 1.0f,	0.0f, 1.0f,
-		 2.0f,  -1.0f,  2.0f,	1.0f, 1.0f, 1.0f,	1.0f, 1.0f,
-		 2.0f,  -1.0f,  2.0f,	1.0f, 1.0f, 1.0f,	1.0f, 0.0f,
-		-2.0f,  -1.0f,  2.0f,	1.0f, 1.0f, 1.0f,	0.0f, 0.0f,
-		-2.0f,  -1.0f, -2.0f,	1.0f, 1.0f, 1.0f,	0.0f, 1.0f,
+		// positions         // colors
+		-2.0f,  -1.0f, -2.0f,  1.0f, 1.0f, 1.0f,
+		 2.0f,  -1.0f, -2.0f,  1.0f, 1.0f, 1.0f,
+		 2.0f,  -1.0f,  2.0f,  1.0f, 1.0f, 1.0f,
+		 2.0f,  -1.0f,  2.0f,  1.0f, 1.0f, 1.0f,
+		-2.0f,  -1.0f,  2.0f,  1.0f, 1.0f, 1.0f,
+		-2.0f,  -1.0f, -2.0f,  1.0f, 1.0f, 1.0f,
 	};
 
 	unsigned int tableIndices[] = {
@@ -156,48 +152,71 @@ int main()
 	   6,
 	};
 
-	// Keyboard
-	GLfloat keyboardVertices[] = {
-		// positions         // colors
-		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+	//Pyramid
+	GLfloat pyramidVertices[] = {
+		// positions			 colors		
+	-0.5f,  0.0f,  0.5f,	0.5f, 0.0f, 1.0f,
+	-0.5f,  0.0f, -0.5f,	1.0f, 5.0f, 0.0f,
+	 0.5f,  0.0f, -0.5f,	0.0f, 1.0f, 0.5f,
+	 0.5f,  0.0f,  0.5f,	0.5f, 0.0f, 1.0f,
+	 0.0f,  0.8f,  0.0f,	1.0f, 0.5f, 0.0f,
 	};
 
-	unsigned int keyboardIndices[] = {
-	    0, 1, 3, // first triangle
-        1, 2, 3  // second triangle
+	unsigned int pyramidIndices[] = {
+	   0, 1, 2,
+	   0, 2, 3,
+	   0, 1, 4,
+	   1, 2, 4,
+	   2, 3, 4,
+	   3, 0, 4
 	};
 
-	// screen
+	//Computer Screen
 	GLfloat screenVertices[] = {
 		// positions         // colors
-		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+		-2.0f,  -1.0f, -2.0f,  0.0f, 0.0f, 1.0f,
+		 2.0f,  -1.0f, -2.0f,  0.0f, 0.0f, 1.0f,
+		 2.0f,  -1.0f,  2.0f,  0.0f, 0.0f, 1.0f,
+		 2.0f,  -1.0f,  2.0f,  0.0f, 0.0f, 1.0f,
+		-2.0f,  -1.0f,  2.0f,  0.0f, 0.0f, 1.0f,
+		-2.0f,  -1.0f, -2.0f,  0.0f, 0.0f, 1.0f,
 	};
 
 	unsigned int screenIndices[] = {
-		0, 1, 3, // first triangle
-		1, 2, 3  // second triangle
+	   0, 1, 2,  
+	   3, 4, 5,
+	   6,
 	};
 
+	// Keyboard
+	GLfloat keyboardVertices[] = {
+		// positions         // colors
+		-2.0f,  -1.0f, -2.0f,  0.0f, 1.0f, 0.0f,
+		 2.0f,  -1.0f, -2.0f,  0.0f, 1.0f, 0.0f,
+		 2.0f,  -1.0f,  2.0f,  0.0f, 1.0f, 0.0f,
+		 2.0f,  -1.0f,  2.0f,  0.0f, 1.0f, 0.0f,
+		-2.0f,  -1.0f,  2.0f,  0.0f, 1.0f, 0.0f,
+		-2.0f,  -1.0f, -2.0f,  0.0f, 1.0f, 0.0f,
+	};
+
+	unsigned int keyboardIndices[] = {
+	   0, 1, 2,  
+	   3, 4, 5,
+	   6,
+	};
 
 	//The viewpoint goes from x = 0, y = 0, to x = 800, y = 600
 	glViewport(0, 0, WIDTH, HEIGHT);
 
 	// Vertex Array Object, Vertex Buffer Object, Element Array Object
 	// VAO must be generated befor the VBO
-	//In this example I am making two objects, one for each triangle
 	GLuint VAOs[5], VBOs[5], EBOs[5];
 	glGenVertexArrays(5, VAOs);
 	glGenBuffers(5, VBOs);
 	glGenBuffers(5, EBOs);
 
-//______________________________________________________________________________________________________________________________
-	//Pyramid container setup
+	//______________________________________________________________________________________________________________________________
+		//Rubik's Cube setup
 	glBindVertexArray(VAOs[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
 
@@ -208,16 +227,13 @@ int main()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(squareIndices), squareIndices, GL_STATIC_DRAW);
 
 	//configures so the OpenGl knows how to use the VBO, position attributes
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	//color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	//texture attribute
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
 //________________________________________________________________________________________________________________________________
 	//Countertop container setup
 	glBindVertexArray(VAOs[1]);
@@ -230,41 +246,32 @@ int main()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(tableIndices), tableIndices, GL_STATIC_DRAW);
 
 	//configures so the OpenGl knows how to use the VBO, position attributes
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	//color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-
-	//texture attribute
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
-	//______________________________________________________________________________________________________________________________________________
-	//Countertop keyboard setup
+//________________________________________________________________________________________________________________________________
+	//Pyramid container setup
 	glBindVertexArray(VAOs[2]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
 
 	//Stores vertices in VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(keyboardVertices), keyboardVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(pyramidVertices), pyramidVertices, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[2]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(keyboardIndices), keyboardIndices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(pyramidIndices), pyramidIndices, GL_STATIC_DRAW);
 
 	//configures so the OpenGl knows how to use the VBO, position attributes
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	//color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-
-	//texture attribute
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
-//______________________________________________________________________________________________________________________________________________________
-
-	//Countertop screen setup
+//________________________________________________________________________________________________________________________________
+	//Computer Screen container setup
 	glBindVertexArray(VAOs[3]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[3]);
 
@@ -275,131 +282,34 @@ int main()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(screenIndices), screenIndices, GL_STATIC_DRAW);
 
 	//configures so the OpenGl knows how to use the VBO, position attributes
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	//color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	//texture attribute
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
-	
-//allows OpenGl to account for the depth of the container
+//___________________________________________________________________________________________________________________________________
+	//Computer Keyboard container setup
+	glBindVertexArray(VAOs[4]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOs[4]);
+
+	//Stores vertices in VBO
+	glBufferData(GL_ARRAY_BUFFER, sizeof(keyboardVertices), keyboardVertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[4]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(keyboardIndices), keyboardIndices, GL_STATIC_DRAW);
+
+	//configures so the OpenGl knows how to use the VBO, position attributes
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	//color attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+//______________________________________________________________________________________________________________________________________________
+		//allows OpenGl to account for the depth of the container
 	glEnable(GL_DEPTH_TEST);
-
-	unsigned int texture1, texture2, texture3, texture4;
-	// texture 1
-	// ---------
-	glGenTextures(1, &texture1);
-	glBindTexture(GL_TEXTURE_2D, texture1);
-	// set the texture wrapping parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// set texture filtering parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// load image, create texture and generate mipmaps
-	int width, height, nrChannels;
-	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-	unsigned char* data = stbi_load("Cube.jpg", &width, &height, &nrChannels, 0);
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data);
-
-	// texture 2
-	// ---------
-	glGenTextures(1, &texture2);
-	glBindTexture(GL_TEXTURE_2D, texture2);
-	// set the texture wrapping parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// set texture filtering parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// load image, create texture and generate mipmaps
-
-	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-	unsigned char* data2 = stbi_load("Granite.jpg", &width, &height, &nrChannels, 0);
-	if (data2)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data2);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data2);
-
-	// texture 3
-	// ---------
-	glGenTextures(1, &texture3);
-	glBindTexture(GL_TEXTURE_2D, texture3);
-	// set the texture wrapping parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// set texture filtering parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// load image, create texture and generate mipmaps
-
-	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-	unsigned char* data3 = stbi_load("keyboard.jpg", &width, &height, &nrChannels, 0);
-	if (data3)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data3);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data3);
-
-	// texture 4
-	// ---------
-	glGenTextures(1, &texture4);
-	glBindTexture(GL_TEXTURE_2D, texture4);
-	// set the texture wrapping parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// set texture filtering parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// load image, create texture and generate mipmaps
-
-	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-	unsigned char* data4 = stbi_load("screen2.jpg", &width, &height, &nrChannels, 0);
-	if (data4)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data4);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data4);
-
-
-
-	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
-	// -------------------------------------------------------------------------------------------
-	ourShader.use();
-	ourShader.setInt("texture1", 0);
-	ourShader.setInt("texture2", 0);
-	ourShader.setInt("texture3", 0);
-	ourShader.setInt("texture4", 0);
-
 
 	//A loop so that the window won't be terminated immediately
 	while (!glfwWindowShouldClose(window))
@@ -439,23 +349,20 @@ int main()
 		glm::mat4 view = camera.GetViewMatrix();
 		ourShader.setMat4("view", view);
 
-		//render the Rubik's Cube
+//__________________________________________________________________________________________________________________________________________
+		//render the Rubik's cube
 		glBindVertexArray(VAOs[0]);
 
 		for (unsigned int i = 0; i < 1; i++)
 
-		{
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture1);
-
-			//initializes matrix to identity matrix
+		{   //initializes matrix to identity matrix
 			glm::mat4 model = glm::mat4(1.0f);
 
 			//moves the 3D object around the world
-			model = glm::translate(model, glm::vec3(-3.5f, -4.7f, -13.0f));
+			model = glm::translate(model, glm::vec3(-3.5f, -4.8f, -13.0f));
 
 			//Rotates the objects over the degees and x, y, z axis
-			model = glm::rotate(model, glm::radians(100.0f), glm::vec3(0.0, 1.0f, 0.0f));
+			model = glm::rotate(model, glm::radians(10.0f), glm::vec3(0.0, 1.0f, 0.0f));
 
 			//changes the size of the object
 			model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
@@ -464,15 +371,12 @@ int main()
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(squareIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
-		//render the countertop cube
+
+		//render the countertop
 		glBindVertexArray(VAOs[1]);
 
 		for (unsigned int i = 0; i < 1; i++)
-
 		{
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture2);
-
 			//initializes matrix to identity matrix
 			glm::mat4 model = glm::mat4(1.0f);
 
@@ -484,62 +388,74 @@ int main()
 
 			//changes the size of the object
 			model = glm::scale(model, glm::vec3(6.0f, 5.0f, 3.0f));
-
 			ourShader.setMat4("model", model);
+
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(tableIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
 
-		//render the keyboard
+		//render the Pyramid cube
 		glBindVertexArray(VAOs[2]);
 
 		for (unsigned int i = 0; i < 1; i++)
 
-		{
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture3);
-			
-			//initializes matrix to identity matrix
+		{   //initializes matrix to identity matrix
 			glm::mat4 model = glm::mat4(1.0f);
 
 			//moves the 3D object around the world
-			model = glm::translate(model, glm::vec3(1.0f, -5.25f, -13.5f));
+			model = glm::translate(model, glm::vec3(-3.5f, -4.3f, -13.0f));
 
 			//Rotates the objects over the degees and x, y, z axis
-			model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0, 0.0f, 0.0f));
+			model = glm::rotate(model, glm::radians(100.0f), glm::vec3(0.0, 1.0f, 0.0f));
 
 			//changes the size of the object
-			model = glm::scale(model, glm::vec3(6.0f, 5.0f, 5.0f));
-
+			model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
 			ourShader.setMat4("model", model);
 			//draws the triangles
-			glDrawElements(GL_TRIANGLES, sizeof(keyboardIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, sizeof(pyramidIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
 
-		//render the keyboard
+		//render the computer Screen
 		glBindVertexArray(VAOs[3]);
 
 		for (unsigned int i = 0; i < 1; i++)
 
-		{
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture4);
-
-			//initializes matrix to identity matrix
+		{   //initializes matrix to identity matrix
 			glm::mat4 model = glm::mat4(1.0f);
 
 			//moves the 3D object around the world
-			model = glm::translate(model, glm::vec3(1.0f, -3.5f, -17.75f));
+			model = glm::translate(model, glm::vec3(1.0f, -1.95f, -17.32f));
 
 			//Rotates the objects over the degees and x, y, z axis
-			model = glm::rotate(model, glm::radians(-45.0f), glm::vec3(1.0, 0.0f, 0.0f));
+			model = glm::rotate(model, glm::radians(55.0f), glm::vec3(1.0, 0.0f, 0.0f));
 
 			//changes the size of the object
-			model = glm::scale(model, glm::vec3(6.0f, 5.0f, 5.0f));
+			model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
+			ourShader.setMat4("model", model);
+
+			//draws the triangles
+			glDrawElements(GL_TRIANGLES, sizeof(screenIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		}
+		//render the keyboard
+		glBindVertexArray(VAOs[4]);
+
+		for (unsigned int i = 0; i < 1; i++)
+
+		{   //initializes matrix to identity matrix
+			glm::mat4 model = glm::mat4(1.0f);
+
+			//moves the 3D object around the world
+			model = glm::translate(model, glm::vec3(1.0f, -3.75f, -13.855f));
+
+			//Rotates the objects over the degees and x, y, z axis
+			model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0, 0.0f, 0.0f));
+
+			//changes the size of the object
+			model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
 
 			ourShader.setMat4("model", model);
 			//draws the triangles
-			glDrawElements(GL_TRIANGLES, sizeof(screenIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, sizeof(keyboardIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
 
 		glfwSwapBuffers(window);
