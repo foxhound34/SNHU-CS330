@@ -163,7 +163,7 @@ int main()
 	};
 
 	// Keyboard
-	GLfloat keyboardVertices[] = {
+	GLfloat computerVertices[] = {
 		// positions         // colors
 		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
 		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
@@ -171,21 +171,7 @@ int main()
 		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
 	};
 
-	unsigned int keyboardIndices[] = {
-		0, 1, 3, // first triangle
-		1, 2, 3  // second triangle
-	};
-
-	// screen
-	GLfloat screenVertices[] = {
-		// positions         // colors
-		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
-	};
-
-	unsigned int screenIndices[] = {
+	unsigned int computerIndices[] = {
 		0, 1, 3, // first triangle
 		1, 2, 3  // second triangle
 	};
@@ -197,13 +183,13 @@ int main()
 	// Vertex Array Object, Vertex Buffer Object, Element Array Object
 	// VAO must be generated befor the VBO
 	//In this example I am making two objects, one for each triangle
-	GLuint VAOs[5], VBOs[5], EBOs[5];
-	glGenVertexArrays(5, VAOs);
-	glGenBuffers(5, VBOs);
-	glGenBuffers(5, EBOs);
+	GLuint VAOs[3], VBOs[3], EBOs[3];
+	glGenVertexArrays(3, VAOs);
+	glGenBuffers(3, VBOs);
+	glGenBuffers(3, EBOs);
 
 	//______________________________________________________________________________________________________________________________
-		//Pyramid container setup
+		//Rubix's Cube container setup
 	glBindVertexArray(VAOs[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
 
@@ -247,15 +233,15 @@ int main()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 	//______________________________________________________________________________________________________________________________________________
-	//Countertop keyboard setup
+	//Computer setup
 	glBindVertexArray(VAOs[2]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
 
 	//Stores vertices in VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(keyboardVertices), keyboardVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(computerVertices), computerVertices, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[2]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(keyboardIndices), keyboardIndices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(computerIndices), computerIndices, GL_STATIC_DRAW);
 
 	//configures so the OpenGl knows how to use the VBO, position attributes
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
@@ -269,28 +255,6 @@ int main()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 	//______________________________________________________________________________________________________________________________________________________
-
-		//Countertop screen setup
-	glBindVertexArray(VAOs[3]);
-	glBindBuffer(GL_ARRAY_BUFFER, VBOs[3]);
-
-	//Stores vertices in VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(screenVertices), screenVertices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[3]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(screenIndices), screenIndices, GL_STATIC_DRAW);
-
-	//configures so the OpenGl knows how to use the VBO, position attributes
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	//color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
-	//texture attribute
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
 
 	//allows OpenGl to account for the depth of the container
 	glEnable(GL_DEPTH_TEST);
@@ -519,11 +483,11 @@ int main()
 
 			ourShader.setMat4("model", model);
 			//draws the triangles
-			glDrawElements(GL_TRIANGLES, sizeof(keyboardIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, sizeof(computerIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
 
 		//render the keyboard
-		glBindVertexArray(VAOs[3]);
+		glBindVertexArray(VAOs[2]);
 
 		for (unsigned int i = 0; i < 1; i++)
 
@@ -545,7 +509,7 @@ int main()
 
 			ourShader.setMat4("model", model);
 			//draws the triangles
-			glDrawElements(GL_TRIANGLES, sizeof(screenIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, sizeof(computerIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
 
 		glfwSwapBuffers(window);
@@ -555,9 +519,9 @@ int main()
 	}
 
 	//De-allocates resources
-	glDeleteVertexArrays(5, VAOs);
-	glDeleteBuffers(5, VBOs);
-	glDeleteBuffers(5, EBOs);
+	glDeleteVertexArrays(3, VAOs);
+	glDeleteBuffers(3, VBOs);
+	glDeleteBuffers(3, EBOs);
 
 	glfwDestroyWindow(window); //Terminates the window
 	glfwTerminate(); //Terminates GLFW
