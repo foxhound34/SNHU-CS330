@@ -91,11 +91,11 @@ int main()
 		return -1;
 	}
 
-	Shader ourShader("3.3.shader.vs", "3.3.shader.fs");
-
+	Shader lightingShader("1.colors.vs", "1.colors.fs");
+	Shader lightCubeShader("1.light_cube.vs", "1.light_cube.fs");
 
 	GLfloat pyramidVertices[] = {
-		// positions			 colors				texture
+		// positions			 colors				 texture
 	-0.5f,  0.0f,  0.5f,	0.5f, 0.0f, 1.0f,		0.0f, 0.0f,
 	-0.5f,  0.0f, -0.5f,	1.0f, 5.0f, 0.0f,		5.0f, 0.0f, //left face
 	 0.5f,  0.0f, -0.5f,	0.0f, 1.0f, 0.5f,		5.0f, 5.0f, //bottom face
@@ -147,8 +147,6 @@ int main()
 	};
 
 	unsigned int lightIndices[] = {
-
-
 		0, 3, 2,
 		2, 1, 0,
 		4, 5, 6,
@@ -164,7 +162,6 @@ int main()
 		20, 21, 22,
 		22, 23, 20
 	};
-
 
 	//The viewpoint goes from x = 0, y = 0, to x = 800, y = 600
 	glViewport(0, 0, WIDTH, HEIGHT);
@@ -218,8 +215,8 @@ int main()
 	//color attribute
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-//______________________________________________________________________________________________________________________________________
-		//allows OpenGl to account for the depth of the container
+	//______________________________________________________________________________________________________________________________________
+			//allows OpenGl to account for the depth of the container
 	glEnable(GL_DEPTH_TEST);
 
 	unsigned int texture1;
@@ -250,14 +247,11 @@ int main()
 
 	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
 	// -------------------------------------------------------------------------------------------
-	ourShader.use();
-	ourShader.setInt("texture1", 0);
-
-
+	// be sure to activate shader when setting uniforms/drawing objects
+	
 	//A loop so that the window won't be terminated immediately
 	while (!glfwWindowShouldClose(window))
 	{
-
 		// per-frame time logic
 		float currentFrame = static_cast<float>(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
@@ -269,7 +263,10 @@ int main()
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		ourShader.use();
+		lightingShader.use();
+		lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.32f);
+		lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+		lightingShader.setInt("texture1", 0);
 
 		//initializes a projection matrix (needed to be added after moving projectiosn to if statement
 		glm::mat4 projection;
@@ -285,24 +282,20 @@ int main()
 		else
 			projection = glm::perspective(glm::radians(camera.Zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 
-
-		ourShader.setMat4("projection", projection);
-
 		// camera/view transformation
 		glm::mat4 view = camera.GetViewMatrix();
-		ourShader.setMat4("view", view);
+		lightingShader.setMat4("projection", projection);
+		lightingShader.setMat4("view", view);
 
 		//render the Pyramid
-		glBindVertexArray(VAOs[0]);
-
 		for (unsigned int i = 0; i < 1; i++)
-
 		{
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture1);
 
 			//initializes matrix to identity matrix
 			glm::mat4 model = glm::mat4(1.0f);
+			lightingShader.setMat4("model", model);
 
 			//moves the 3D object around the world
 			model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
@@ -313,20 +306,22 @@ int main()
 			//changes the size of the object
 			model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
 
-			ourShader.setMat4("model", model);
+			glBindVertexArray(VAOs[0]);
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(pyramidIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
 
 		//render the Key Light cube
-		glBindVertexArray(VAOs[1]);
-
 		for (unsigned int i = 0; i < 1; i++)
-
 		{
+			// also draw the lamp object
+			lightCubeShader.use();
+			lightCubeShader.setMat4("projection", projection);
+			lightCubeShader.setMat4("view", view);
+
 			//initializes matrix to identity matrix
 			glm::mat4 model = glm::mat4(1.0f);
-
+		
 			//moves the 3D object around the world
 			model = glm::translate(model, keyLightPos);
 
@@ -335,18 +330,21 @@ int main()
 
 			//changes the size of the object
 			model = glm::scale(model, glm::vec3(0.1f));
+			lightCubeShader.setMat4("model", model);
 
-			ourShader.setMat4("model", model);
+			glBindVertexArray(VAOs[1]);
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(lightIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
 
 		//render the Fix Light cube
-		glBindVertexArray(VAOs[1]);
-
 		for (unsigned int i = 0; i < 1; i++)
-
 		{
+			// also draw the lamp object
+			lightCubeShader.use();
+			lightCubeShader.setMat4("projection", projection);
+			lightCubeShader.setMat4("view", view);
+
 			//initializes matrix to identity matrix
 			glm::mat4 model = glm::mat4(1.0f);
 
@@ -358,8 +356,9 @@ int main()
 
 			//changes the size of the object
 			model = glm::scale(model, glm::vec3(0.1f));
+			lightCubeShader.setMat4("model", model);
 
-			ourShader.setMat4("model", model);
+			glBindVertexArray(VAOs[1]);
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(lightIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
