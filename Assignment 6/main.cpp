@@ -44,8 +44,8 @@ bool perspective = false;
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
 
-glm::vec3 keyLightPos(0.2f, 1.0f, 1.0f);
-glm::vec3 fixLightPos(-0.2f, 0.2f, -1.5f);
+glm::vec3 keyLightPos(0.0f, 1.0f, 1.0f);
+glm::vec3 fixLightPos(0.0f, 0.2f, -1.5f);
 
 
 int main()
@@ -91,16 +91,20 @@ int main()
 		return -1;
 	}
 
-	Shader lightingShader("1.colors.vs", "1.colors.fs");
-	Shader lightCubeShader("1.light_cube.vs", "1.light_cube.fs");
+	//allows OpenGl to account for the depth of the container
+	glEnable(GL_DEPTH_TEST);
 
+	Shader lightingShader("2.2.basic_lighting.vs", "2.2.basic_lighting.fs");
+	Shader lightCubeShader("2.2.light_cube.vs", "2.2.light_cube.fs");
+
+	//Vertex and Indices from freecodecamp.com
 	GLfloat pyramidVertices[] = {
-		// positions			 colors				 texture
-	-0.5f,  0.0f,  0.5f,	0.5f, 0.0f, 1.0f,		0.0f, 0.0f,
-	-0.5f,  0.0f, -0.5f,	1.0f, 5.0f, 0.0f,		5.0f, 0.0f, //left face
-	 0.5f,  0.0f, -0.5f,	0.0f, 1.0f, 0.5f,		5.0f, 5.0f, //bottom face
-	 0.5f,  0.0f,  0.5f,	0.5f, 0.0f, 1.0f,		5.0f, 0.0f, //front face
-	 0.0f,  0.8f,  0.0f,	1.0f, 0.5f, 0.0f,		2.0f, 5.0f,
+		// positions			 Normals				texture
+	-0.5f,  0.0f,  0.5f,	0.0f, 0.0f, 1.0f,		0.0f, 0.0f,//left face
+	-0.5f,  0.0f, -0.5f,	0.0f, 0.0f, 0.0f,		5.0f, 0.0f, //left face
+	 0.5f,  0.0f, -0.5f,	1.0f, 0.0f, 0.0f,		5.0f, 5.0f, //bottom face
+	 0.5f,  0.0f,  0.5f,	1.0f, 0.0f, 1.0f,		5.0f, 0.0f, //front face
+	 0.0f,  0.8f,  0.0f,	0.0f, 0.0f, 0.0f,		2.0f, 5.0f,
 	};
 
 	unsigned int pyramidIndices[] = {
@@ -175,7 +179,7 @@ int main()
 	glGenBuffers(2, EBOs);
 
 	//______________________________________________________________________________________________________________________________
-		//first container setup
+		//Pyramid container setup
 	glBindVertexArray(VAOs[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
 
@@ -189,7 +193,7 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	//color attribute
+	//Normal attribute
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
@@ -216,8 +220,7 @@ int main()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 	//______________________________________________________________________________________________________________________________________
-			//allows OpenGl to account for the depth of the container
-	glEnable(GL_DEPTH_TEST);
+			
 
 	unsigned int texture1;
 	// texture 1
@@ -264,8 +267,10 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		lightingShader.use();
-		lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.32f);
+		lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
 		lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+		lightingShader.setVec3("lightPos", keyLightPos);
+		lightingShader.setVec3("viewPos", camera.Position);
 		lightingShader.setInt("texture1", 0);
 
 		//initializes a projection matrix (needed to be added after moving projectiosn to if statement
@@ -326,7 +331,7 @@ int main()
 			model = glm::translate(model, keyLightPos);
 
 			//Rotates the objects over the degees and x, y, z axis
-			model = glm::rotate(model, glm::radians(10.0f), glm::vec3(0.0, 1.0f, 0.0f));
+			model = glm::rotate(model, glm::radians(-10.0f), glm::vec3(1.0, 0.0f, 0.0f));
 
 			//changes the size of the object
 			model = glm::scale(model, glm::vec3(0.1f));
@@ -352,7 +357,7 @@ int main()
 			model = glm::translate(model, fixLightPos);
 
 			//Rotates the objects over the degees and x, y, z axis
-			model = glm::rotate(model, glm::radians(10.0f), glm::vec3(0.0, 1.0f, 0.0f));
+			model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0, 1.0f, 0.0f));
 
 			//changes the size of the object
 			model = glm::scale(model, glm::vec3(0.1f));
