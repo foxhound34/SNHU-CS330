@@ -575,9 +575,10 @@ int main()
 
 		{
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture4); //screen picture
-			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, texture6); //caution picture
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, texture4); //screen picture
+			bool multipleTextures = false;
 
 			//initializes matrix to identity matrix
 			glm::mat4 model = glm::mat4(1.0f);
