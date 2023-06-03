@@ -99,7 +99,7 @@ int main()
 	//Vertex and Indices from freecodecamp.com
 	GLfloat pyramidVertices[] = {
 		// positions			 Normals				texture
-   - 0.5f,  0.0f,  0.5f,	0.0f, -1.0f, 0.0f,		    0.0f, 0.0f,//left face
+	-0.5f,  0.0f,  0.5f,	0.0f, -1.0f, 0.0f,		    0.0f, 0.0f,//left face
 	-0.5f,  0.0f, -0.5f,	0.0f, -1.0f, 0.0f,		    5.0f, 0.0f, //left face
 	 0.5f,  0.0f, -0.5f,	0.847f, -0.53f, 0.0f,		5.0f, 5.0f, //bottom face
 	 0.5f,  0.0f,  0.5f,	0.0f, -0.53f, 0.848f,		5.0f, 0.0f, //front face
@@ -107,13 +107,13 @@ int main()
 	};
 
 	unsigned int pyramidIndices[] = {
-		          //calculated normals using cross-products
-	   0, 1, 2,  //0.0, -1.0, 0.0
-	   0, 2, 3,  //0.0, -1.0, 0.0
-	   0, 1, 4, //0.847, -0.53, 0.0
-	   1, 2, 4, //0.0, -0.53, 0.848
-	   2, 3, 4, //-0.848, -0.53, 0.0
-	   3, 0, 4 //0.0, -0.53, 0.848
+		//calculated normals using cross-products
+0, 1, 2,  //0.0, -1.0, 0.0
+0, 2, 3,  //0.0, -1.0, 0.0
+0, 1, 4, //0.847, -0.53, 0.0
+1, 2, 4, //0.0, -0.53, 0.848
+2, 3, 4, //-0.848, -0.53, 0.0
+3, 0, 4 //0.0, -0.53, 0.848
 	};
 
 	GLfloat lightVertices[] = {
@@ -219,7 +219,7 @@ int main()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 	//______________________________________________________________________________________________________________________________________
-			
+
 
 	unsigned int texture1;
 	// texture 1
@@ -250,7 +250,7 @@ int main()
 	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
 	// -------------------------------------------------------------------------------------------
 	// be sure to activate shader when setting uniforms/drawing objects
-	
+
 	//A loop so that the window won't be terminated immediately
 	while (!glfwWindowShouldClose(window))
 	{
@@ -327,7 +327,7 @@ int main()
 		//								  -    
 		//    Render the Key Light cube   -
 		//_________________________________
-		/*for (unsigned int i = 0; i < 1; i++)
+		for (unsigned int i = 0; i < 1; i++)
 		{
 			// also draw the lamp object
 			lightCubeShader.use();
@@ -336,7 +336,7 @@ int main()
 
 			//initializes matrix to identity matrix
 			glm::mat4 model = glm::mat4(1.0f);
-		
+
 			//moves the 3D object around the world
 			model = glm::translate(model, keyLightPos);
 
@@ -353,7 +353,7 @@ int main()
 		}
 
 		//_________________________________
-		//								  -    
+		//								  -
 		//    Render the Fix Light cube   -
 		//_________________________________
 		for (unsigned int i = 0; i < 1; i++)
@@ -379,7 +379,7 @@ int main()
 			glBindVertexArray(VAOs[1]);
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(lightIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
-		}*/
+		}
 
 		glfwSwapBuffers(window);
 
