@@ -268,8 +268,12 @@ int main()
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 		lightingShader.use();
-		lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-		lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+
+		//sets the color of the object and the light source
+		//ObjectColor and LightColor are multiplyed to give the color we percieve
+		lightingShader.setVec3("objectColor", 0.0f, 1.0f, 0.0f);
+		lightingShader.setVec3("lightColor", 1.0f, 0.5f, 0.31f);
+
 		lightingShader.setVec3("lightPos", keyLightPos);
 		lightingShader.setVec3("viewPos", camera.Position);
 		lightingShader.setInt("texture1", 0);
