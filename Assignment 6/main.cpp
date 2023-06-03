@@ -44,7 +44,8 @@ bool perspective = false;
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
 
-glm::vec3 keyLightPos(0.0f, 1.0f, 1.0f);
+//Sets the location in the space of the lights
+glm::vec3 keyLightPos(0.0f, 0.5f, 1.0f);
 glm::vec3 fixLightPos(0.0f, 0.2f, -1.5f);
 
 
@@ -74,6 +75,7 @@ int main()
 		return -1;
 	}
 
+	//Tells GLFW we would like to use the window we just created, because it is stupid
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
@@ -81,9 +83,6 @@ int main()
 
 	// tell GLFW to capture our mouse
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	//Tells GLFW we would like to use the window we just created, because it is stupid
-	glfwMakeContextCurrent(window);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
@@ -100,20 +99,21 @@ int main()
 	//Vertex and Indices from freecodecamp.com
 	GLfloat pyramidVertices[] = {
 		// positions			 Normals				texture
-	-0.5f,  0.0f,  0.5f,	0.0f, 0.0f, 1.0f,		0.0f, 0.0f,//left face
-	-0.5f,  0.0f, -0.5f,	0.0f, 0.0f, 0.0f,		5.0f, 0.0f, //left face
-	 0.5f,  0.0f, -0.5f,	1.0f, 0.0f, 0.0f,		5.0f, 5.0f, //bottom face
-	 0.5f,  0.0f,  0.5f,	1.0f, 0.0f, 1.0f,		5.0f, 0.0f, //front face
-	 0.0f,  0.8f,  0.0f,	0.0f, 0.0f, 0.0f,		2.0f, 5.0f,
+   - 0.5f,  0.0f,  0.5f,	0.0f, -1.0f, 0.0f,		    0.0f, 0.0f,//left face
+	-0.5f,  0.0f, -0.5f,	0.0f, -1.0f, 0.0f,		    5.0f, 0.0f, //left face
+	 0.5f,  0.0f, -0.5f,	0.847f, -0.53f, 0.0f,		5.0f, 5.0f, //bottom face
+	 0.5f,  0.0f,  0.5f,	0.0f, -0.53f, 0.848f,		5.0f, 0.0f, //front face
+	 0.0f,  0.8f,  0.0f,	0.0f, -0.53f, 0.848f,		2.0f, 5.0f,
 	};
 
 	unsigned int pyramidIndices[] = {
-	   0, 1, 2,
-	   0, 2, 3,
-	   0, 1, 4,
-	   1, 2, 4,
-	   2, 3, 4,
-	   3, 0, 4
+		          //calculated normals using cross-products
+	   0, 1, 2,  //0.0, -1.0, 0.0
+	   0, 2, 3,  //0.0, -1.0, 0.0
+	   0, 1, 4, //0.847, -0.53, 0.0
+	   1, 2, 4, //0.0, -0.53, 0.848
+	   2, 3, 4, //-0.848, -0.53, 0.0
+	   3, 0, 4 //0.0, -0.53, 0.848
 	};
 
 	GLfloat lightVertices[] = {
@@ -179,7 +179,7 @@ int main()
 	glGenBuffers(2, EBOs);
 
 	//______________________________________________________________________________________________________________________________
-		//Pyramid container setup
+	//Pyramid container setup
 	glBindVertexArray(VAOs[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
 
@@ -201,8 +201,7 @@ int main()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 	//________________________________________________________________________________________________________________________________
-
-	//Key-light setup
+	//Keylight setup
 	glBindVertexArray(VAOs[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
 
@@ -264,7 +263,9 @@ int main()
 		processInput(window);
 
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		//swapped to Depth and color to prevent any issues with glClear
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 		lightingShader.use();
 		lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
@@ -292,7 +293,10 @@ int main()
 		lightingShader.setMat4("projection", projection);
 		lightingShader.setMat4("view", view);
 
-		//render the Pyramid
+		//_________________________________
+		//								  -    
+		//    Render the Pyramid          -
+		//_________________________________
 		for (unsigned int i = 0; i < 1; i++)
 		{
 			glActiveTexture(GL_TEXTURE0);
@@ -315,9 +319,11 @@ int main()
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(pyramidIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
-
-		//render the Key Light cube
-		for (unsigned int i = 0; i < 1; i++)
+		//_________________________________
+		//								  -    
+		//    Render the Key Light cube   -
+		//_________________________________
+		/*for (unsigned int i = 0; i < 1; i++)
 		{
 			// also draw the lamp object
 			lightCubeShader.use();
@@ -331,7 +337,7 @@ int main()
 			model = glm::translate(model, keyLightPos);
 
 			//Rotates the objects over the degees and x, y, z axis
-			model = glm::rotate(model, glm::radians(-10.0f), glm::vec3(1.0, 0.0f, 0.0f));
+			model = glm::rotate(model, glm::radians(-15.0f), glm::vec3(1.0, 0.0f, 0.0f));
 
 			//changes the size of the object
 			model = glm::scale(model, glm::vec3(0.1f));
@@ -342,7 +348,10 @@ int main()
 			glDrawElements(GL_TRIANGLES, sizeof(lightIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
 
-		//render the Fix Light cube
+		//_________________________________
+		//								  -    
+		//    Render the Fix Light cube   -
+		//_________________________________
 		for (unsigned int i = 0; i < 1; i++)
 		{
 			// also draw the lamp object
@@ -366,7 +375,7 @@ int main()
 			glBindVertexArray(VAOs[1]);
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(lightIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
-		}
+		}*/
 
 		glfwSwapBuffers(window);
 
