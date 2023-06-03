@@ -93,7 +93,7 @@ int main()
 
 		//  ++++++++++++++++++++++++++++++
 		//  +                            +
-		//  +       Ribik's Cube         +
+		//  +    Ribik's Cube Mesh       +
 		//	+                            +
 		//  ++++++++++++++++++++++++++++++
 	GLfloat squareVertices[] = {
@@ -149,7 +149,7 @@ int main()
 
 		//  ++++++++++++++++++++++++++++++
 		//  +                            +
-		//  +        Countertop          +
+		//  +      Countertop Mesh       +
 		//	+                            +
 		//  ++++++++++++++++++++++++++++++
 	GLfloat tableVertices[] = {
@@ -170,7 +170,7 @@ int main()
 
 		//  ++++++++++++++++++++++++++++++
 		//  +                            +
-		//  +       Computer Setup       +
+		//  +       Computer Mesh        +
 		//	+                            +
 		//  ++++++++++++++++++++++++++++++
 	GLfloat computerVertices[] = {
@@ -198,8 +198,13 @@ int main()
 	glGenBuffers(3, VBOs);
 	glGenBuffers(3, EBOs);
 
-	//______________________________________________________________________________________________________________________________
-		//Rubix's Cube container setup
+
+
+		//  ++++++++++++++++++++++++++++++
+		//  +                            +
+		//  +    Rubik's Cube Setup      +
+		//	+                            +
+		//  ++++++++++++++++++++++++++++++
 	glBindVertexArray(VAOs[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
 
@@ -213,15 +218,17 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	//color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
 	//texture attribute
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
-	//________________________________________________________________________________________________________________________________
-		//Countertop container setup
+
+
+
+		//  ++++++++++++++++++++++++++++++
+		//  +                            +
+		//  +     Countertop Setup       +
+		//	+                            +
+		//  ++++++++++++++++++++++++++++++
 	glBindVertexArray(VAOs[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
 
@@ -235,15 +242,17 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	//color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
 	//texture attribute
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
-	//______________________________________________________________________________________________________________________________________________
-	//Computer setup
+
+
+	
+	    //  ++++++++++++++++++++++++++++++
+		//  +                            +
+		//  +       Computer Setup       +
+		//	+                            +
+		//  ++++++++++++++++++++++++++++++
 	glBindVertexArray(VAOs[2]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
 
@@ -257,15 +266,11 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	//color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
 	//texture attribute
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
-	//______________________________________________________________________________________________________________________________________________________
 
+	//______________________________________________________________________________________________________________________________________________________
 
 	//allows OpenGl to account for the depth of the container
 	glEnable(GL_DEPTH_TEST);
@@ -273,8 +278,13 @@ int main()
 
 	unsigned int texture1, texture2, texture3, texture4, texture5, texture6;
 
-	// texture 1 Rubik's Cube
-	// ---------
+
+
+	//  ++++++++++++++++++++++++++++++
+	//  +                            +
+	//  +    Rubik's Cube Texture    +
+	//	+                            +
+	//  ++++++++++++++++++++++++++++++
 	glGenTextures(1, &texture1);
 	glBindTexture(GL_TEXTURE_2D, texture1);
 	// set the texture wrapping parameters
@@ -298,8 +308,13 @@ int main()
 	}
 	stbi_image_free(data);
 
-	// texture 2 Countertop
-	// ---------
+
+
+	//  ++++++++++++++++++++++++++++++
+	//  +                            +
+	//  +     Countertop Texture     +
+	//	+                            +
+	//  ++++++++++++++++++++++++++++++
 	glGenTextures(1, &texture2);
 	glBindTexture(GL_TEXTURE_2D, texture2);
 	// set the texture wrapping parameters
@@ -323,8 +338,13 @@ int main()
 	}
 	stbi_image_free(data2);
 
-	// texture 3 Computer Keyboard
-	// ---------
+
+
+	//  ++++++++++++++++++++++++++++++
+	//  +                            +
+	//  +     Keyboard Texture       +
+	//	+                            +
+	//  ++++++++++++++++++++++++++++++
 	glGenTextures(1, &texture3);
 	glBindTexture(GL_TEXTURE_2D, texture3);
 	// set the texture wrapping parameters
@@ -348,8 +368,13 @@ int main()
 	}
 	stbi_image_free(data3);
 
-	// texture 4 Computer Screen
-	// ---------
+
+
+	//  ++++++++++++++++++++++++++++++
+	//  +                            +
+	//  +  Computer Screen Texture   +
+	//	+                            +
+	//  ++++++++++++++++++++++++++++++
 	glGenTextures(1, &texture4);
 	glBindTexture(GL_TEXTURE_2D, texture4);
 	// set the texture wrapping parameters
@@ -373,8 +398,11 @@ int main()
 	}
 	stbi_image_free(data4);
 
-	// texture 5 Computer Screen back
-	// ---------
+	    //  ++++++++++++++++++++++++++++++
+		//  +                            +
+		//  +       Cover Texture        +
+		//	+                            +
+		//  ++++++++++++++++++++++++++++++
 	glGenTextures(1, &texture5);
 	glBindTexture(GL_TEXTURE_2D, texture5);
 	// set the texture wrapping parameters
@@ -398,8 +426,11 @@ int main()
 	}
 	stbi_image_free(data5);
 
-	// texture 6 Caution
-	// ---------
+	//  ++++++++++++++++++++++++++++++
+	//  +                            +
+	//  +    Caution Sign Texture    +
+	//	+                            +
+	//  ++++++++++++++++++++++++++++++
 	glGenTextures(1, &texture6);
 	glBindTexture(GL_TEXTURE_2D, texture6);
 	// set the texture wrapping parameters
@@ -469,7 +500,7 @@ int main()
 
 		//  ++++++++++++++++++++++++++++++
 		//  +                            +
-		//  +       Ribik's Cube         +
+		//  +     Ribik's Cube Draw      +
 		//	+                            +
 		//  ++++++++++++++++++++++++++++++
 
@@ -501,7 +532,7 @@ int main()
 
 		//  ++++++++++++++++++++++++++++++
 		//  +                            +
-		//  +        Countertop          +
+		//  +      Countertop Draw       +
 		//	+                            +
 		//  ++++++++++++++++++++++++++++++
 
@@ -533,7 +564,7 @@ int main()
 
 		/// ++++++++++++++++++++++++++++++
 		//  +                            +
-		//  +  Keyboard of the computer  +
+		//  +        Keyboard Draw       +
 		//	+                            +
 		//  ++++++++++++++++++++++++++++++
 
@@ -565,15 +596,14 @@ int main()
 
 		//  ++++++++++++++++++++++++++++++
 		//  +                            +
-		//  +   Screen of the computer   +
+		//  +        Screen Draw         +
 		//	+                            +
 		//  ++++++++++++++++++++++++++++++
-
-		glBindVertexArray(VAOs[2]);
 
 		for (unsigned int i = 0; i < 1; i++)
 
 		{
+			//Overlays two textures on a single surface
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture6); //caution picture
 			glActiveTexture(GL_TEXTURE1);
@@ -600,34 +630,33 @@ int main()
 
 		//  ++++++++++++++++++++++++++++++
 		//  +                            +
-		//  + Back cover of the computer +
+		//  +         Cover Draw         +
 		//	+                            +
 		//  ++++++++++++++++++++++++++++++
 
-		glBindVertexArray(VAOs[2]);
-		for (unsigned int i = 0; i < 1; i++)
+			for (unsigned int i = 0; i < 1; i++)
 
-		{
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture5); //Computer Screen back
+			{
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, texture5); //Computer Screen back
 
-			//initializes matrix to identity matrix
-			glm::mat4 model = glm::mat4(1.0f);
+				//initializes matrix to identity matrix
+				glm::mat4 model = glm::mat4(1.0f);
 
-			//moves the 3D object around the world
-			model = glm::translate(model, glm::vec3(1.0f, -3.5f, -17.76f));
+				//moves the 3D object around the world
+				model = glm::translate(model, glm::vec3(1.0f, -3.5f, -17.76f));
 
-			//Rotates the objects over the degees and x, y, z axis
-			model = glm::rotate(model, glm::radians(-45.0f), glm::vec3(1.0, 0.0f, 0.0f));
-			model = glm::rotate(model, glm::radians( 180.0f), glm::vec3(0.0, 1.0f, 0.0f));
+				//Rotates and flips the object over the degees and x, y, z axis
+				model = glm::rotate(model, glm::radians(-45.0f), glm::vec3(1.0, 0.0f, 0.0f));
+				model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0, 1.0f, 0.0f));
 
-			//changes the size of the object
-			model = glm::scale(model, glm::vec3(6.0f, 5.0f, 5.0f));
+				//changes the size of the object
+				model = glm::scale(model, glm::vec3(6.0f, 5.0f, 5.0f));
 
-			ourShader.setMat4("model", model);
-			//draws the triangles
-			glDrawElements(GL_TRIANGLES, sizeof(computerIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
-		}
+				ourShader.setMat4("model", model);
+				//draws the triangles
+				glDrawElements(GL_TRIANGLES, sizeof(computerIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+			}
 		std::cout << glGetError() << std::endl;
 
 		glfwSwapBuffers(window);
