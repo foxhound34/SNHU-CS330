@@ -88,12 +88,16 @@ int main()
 		return -1;
 	}
 
+	// Places shaders into a single callable variable
 	Shader ourShader("3.3.shader.vs", "3.3.shader.fs");
 
-
-	//Rubik's Cube
+		//  ++++++++++++++++++++++++++++++
+		//  +                            +
+		//  +       Ribik's Cube         +
+		//	+                            +
+		//  ++++++++++++++++++++++++++++++
 	GLfloat squareVertices[] = {
-		// positions         // colors
+		// positions              colors              texture
 
 		//Left and Right Side
 		-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f,		0.0f, 0.0f, // 0 upper left
@@ -127,25 +131,27 @@ int main()
 	};
 
 	unsigned int squareIndices[] = {
-		
-		
-		0, 3, 2,
-		2, 1, 0,
-		4, 5, 6,
-		6, 7 ,4,
-		// left and right
-		11, 8, 9,
-		9, 10, 11,
-		12, 13, 14,
-		14, 15, 12,
-		// bottom and top
-		16, 17, 18,
-		18, 19, 16,
-		20, 21, 22,
-		22, 23, 20
+			0, 3, 2,
+			2, 1, 0,
+			4, 5, 6,
+			6, 7 ,4,
+			// left and right
+			11, 8, 9,
+			9, 10, 11,
+			12, 13, 14,
+			14, 15, 12,
+			// bottom and top
+			16, 17, 18,
+			18, 19, 16,
+			20, 21, 22,
+			22, 23, 20
 	};
 
-	//Countertop
+		//  ++++++++++++++++++++++++++++++
+		//  +                            +
+		//  +        Countertop          +
+		//	+                            +
+		//  ++++++++++++++++++++++++++++++
 	GLfloat tableVertices[] = {
 		// positions			// colors			texture
 		-2.0f,  -1.0f, -2.0f,	1.0f, 1.0f, 1.0f,	0.0f, 0.0f,
@@ -162,9 +168,13 @@ int main()
 	   6
 	};
 
-	// Keyboard and Screen
+		//  ++++++++++++++++++++++++++++++
+		//  +                            +
+		//  +       Computer Setup       +
+		//	+                            +
+		//  ++++++++++++++++++++++++++++++
 	GLfloat computerVertices[] = {
-		// positions         // colors
+		// positions               colors            texture
 		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
 		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
 		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
@@ -176,20 +186,6 @@ int main()
 		1, 2, 3  // second triangle
 	};
 
-	// Computer Back cover
-	GLfloat backVertices[] = {
-		// positions         // colors
-		 0.5f,  0.5f, 0.0f,   0.753f, 0.753f, 0.753f, 
-		 0.5f, -0.5f, 0.0f,   0.753f, 0.753f, 0.753f,
-		-0.5f, -0.5f, 0.0f,   0.753f, 0.753f, 0.753f,
-		-0.5f,  0.5f, 0.0f,   0.753f, 0.753f, 0.753f,
-	};
-
-	unsigned int backIndices[] = {
-		0, 1, 3, // first triangle
-		1, 2, 3  // second triangle
-	};
-
 
 	//The viewpoint goes from x = 0, y = 0, to x = 800, y = 600
 	glViewport(0, 0, WIDTH, HEIGHT);
@@ -197,10 +193,10 @@ int main()
 	// Vertex Array Object, Vertex Buffer Object, Element Array Object
 	// VAO must be generated befor the VBO
 	//In this example I am making two objects, one for each triangle
-	GLuint VAOs[4], VBOs[4], EBOs[4];
-	glGenVertexArrays(4, VAOs);
-	glGenBuffers(4, VBOs);
-	glGenBuffers(4, EBOs);
+	GLuint VAOs[3], VBOs[3], EBOs[3];
+	glGenVertexArrays(3, VAOs);
+	glGenBuffers(3, VBOs);
+	glGenBuffers(3, EBOs);
 
 	//______________________________________________________________________________________________________________________________
 		//Rubix's Cube container setup
@@ -270,30 +266,14 @@ int main()
 	glEnableVertexAttribArray(2);
 	//______________________________________________________________________________________________________________________________________________________
 
-	//Computer back setup
-	glBindVertexArray(VAOs[3]);
-	glBindBuffer(GL_ARRAY_BUFFER, VBOs[3]);
-
-	//Stores vertices in VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(backVertices), backVertices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[3]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(backIndices), backIndices, GL_STATIC_DRAW);
-
-	//configures so the OpenGl knows how to use the VBO, position attributes
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	//color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
 
 	//allows OpenGl to account for the depth of the container
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_FRAMEBUFFER_SRGB);
 
-	unsigned int texture1, texture2, texture3, texture4;
-	// texture 1
+	unsigned int texture1, texture2, texture3, texture4, texture5, texture6;
+
+	// texture 1 Rubik's Cube
 	// ---------
 	glGenTextures(1, &texture1);
 	glBindTexture(GL_TEXTURE_2D, texture1);
@@ -318,7 +298,7 @@ int main()
 	}
 	stbi_image_free(data);
 
-	// texture 2
+	// texture 2 Countertop
 	// ---------
 	glGenTextures(1, &texture2);
 	glBindTexture(GL_TEXTURE_2D, texture2);
@@ -343,7 +323,7 @@ int main()
 	}
 	stbi_image_free(data2);
 
-	// texture 3
+	// texture 3 Computer Keyboard
 	// ---------
 	glGenTextures(1, &texture3);
 	glBindTexture(GL_TEXTURE_2D, texture3);
@@ -368,7 +348,7 @@ int main()
 	}
 	stbi_image_free(data3);
 
-	// texture 4
+	// texture 4 Computer Screen
 	// ---------
 	glGenTextures(1, &texture4);
 	glBindTexture(GL_TEXTURE_2D, texture4);
@@ -393,16 +373,62 @@ int main()
 	}
 	stbi_image_free(data4);
 
+	// texture 5 Computer Screen back
+	// ---------
+	glGenTextures(1, &texture5);
+	glBindTexture(GL_TEXTURE_2D, texture5);
+	// set the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// load image, create texture and generate mipmaps
 
+	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+	unsigned char* data5 = stbi_load("computerBack.jpg", &width, &height, &nrChannels, 0);
+	if (data5)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data5);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data5);
+
+	// texture 6 Caution
+	// ---------
+	glGenTextures(1, &texture6);
+	glBindTexture(GL_TEXTURE_2D, texture6);
+	// set the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// load image, create texture and generate mipmaps
+
+	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+	unsigned char* data6 = stbi_load("Caution.png", &width, &height, &nrChannels, 0);
+	if (data6)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data6);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data6);
 
 	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
 	// -------------------------------------------------------------------------------------------
 	ourShader.use();
-	ourShader.setInt("texture1", 0);
-	ourShader.setInt("texture2", 0);
-	ourShader.setInt("texture3", 0);
 	ourShader.setInt("texture4", 0);
-
+	ourShader.setInt("texture6", 1);
+	std::cout << glGetError() << std::endl; // returns 0 (no error)
 
 	//A loop so that the window won't be terminated immediately
 	while (!glfwWindowShouldClose(window))
@@ -417,9 +443,7 @@ int main()
 		processInput(window);
 
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		ourShader.use();
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 		//initializes a projection matrix (needed to be added after moving projectiosn to if statement
 		glm::mat4 projection;
@@ -442,7 +466,13 @@ int main()
 		glm::mat4 view = camera.GetViewMatrix();
 		ourShader.setMat4("view", view);
 
-		//render the Rubik's Cube
+
+		//  ++++++++++++++++++++++++++++++
+		//  +                            +
+		//  +       Ribik's Cube         +
+		//	+                            +
+		//  ++++++++++++++++++++++++++++++
+
 		glBindVertexArray(VAOs[0]);
 
 		for (unsigned int i = 0; i < 1; i++)
@@ -467,7 +497,14 @@ int main()
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(squareIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
-		//render the countertop cube
+		std::cout << glGetError() << std::endl;
+
+		//  ++++++++++++++++++++++++++++++
+		//  +                            +
+		//  +        Countertop          +
+		//	+                            +
+		//  ++++++++++++++++++++++++++++++
+
 		glBindVertexArray(VAOs[1]);
 
 		for (unsigned int i = 0; i < 1; i++)
@@ -492,8 +529,14 @@ int main()
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(tableIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
+		std::cout << glGetError() << std::endl;
 
-		//render the keyboard
+		/// ++++++++++++++++++++++++++++++
+		//  +                            +
+		//  +  Keyboard of the computer  +
+		//	+                            +
+		//  ++++++++++++++++++++++++++++++
+
 		glBindVertexArray(VAOs[2]);
 
 		for (unsigned int i = 0; i < 1; i++)
@@ -518,8 +561,14 @@ int main()
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(computerIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
+		std::cout << glGetError() << std::endl;
 
-		//render the keyboard
+		//  ++++++++++++++++++++++++++++++
+		//  +                            +
+		//  +   Screen of the computer   +
+		//	+                            +
+		//  ++++++++++++++++++++++++++++++
+
 		glBindVertexArray(VAOs[2]);
 
 		for (unsigned int i = 0; i < 1; i++)
@@ -527,6 +576,8 @@ int main()
 		{
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture4); //screen picture
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, texture6); //caution picture
 
 			//initializes matrix to identity matrix
 			glm::mat4 model = glm::mat4(1.0f);
@@ -544,11 +595,21 @@ int main()
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(computerIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
-		// Back cover of the computer
-		glBindVertexArray(VAOs[3]);
+		std::cout << glGetError() << std::endl;
+
+		//  ++++++++++++++++++++++++++++++
+		//  +                            +
+		//  + Back cover of the computer +
+		//	+                            +
+		//  ++++++++++++++++++++++++++++++
+
+		glBindVertexArray(VAOs[2]);
 		for (unsigned int i = 0; i < 1; i++)
 
 		{
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture5); //Computer Screen back
+
 			//initializes matrix to identity matrix
 			glm::mat4 model = glm::mat4(1.0f);
 
@@ -557,14 +618,16 @@ int main()
 
 			//Rotates the objects over the degees and x, y, z axis
 			model = glm::rotate(model, glm::radians(-45.0f), glm::vec3(1.0, 0.0f, 0.0f));
+			model = glm::rotate(model, glm::radians( 180.0f), glm::vec3(0.0, 1.0f, 0.0f));
 
 			//changes the size of the object
 			model = glm::scale(model, glm::vec3(6.0f, 5.0f, 5.0f));
 
 			ourShader.setMat4("model", model);
 			//draws the triangles
-			glDrawElements(GL_TRIANGLES, sizeof(backIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, sizeof(computerIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
+		std::cout << glGetError() << std::endl;
 
 		glfwSwapBuffers(window);
 
@@ -572,14 +635,14 @@ int main()
 		glfwPollEvents();
 	}
 
-	//De-allocates resources
-	glDeleteVertexArrays(3, VAOs);
-	glDeleteBuffers(3, VBOs);
-	glDeleteBuffers(3, EBOs);
+		//De-allocates resources
+		glDeleteVertexArrays(3, VAOs);
+		glDeleteBuffers(3, VBOs);
+		glDeleteBuffers(3, EBOs);
 
-	glfwDestroyWindow(window); //Terminates the window
-	glfwTerminate(); //Terminates GLFW
-	return 0;
+		glfwDestroyWindow(window); //Terminates the window
+		glfwTerminate(); //Terminates GLFW
+		return 0;
 }
 
 void processInput(GLFWwindow* window)
