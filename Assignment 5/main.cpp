@@ -71,6 +71,7 @@ int main()
 		return -1;
 	}
 
+	//Tells GLFW we would like to use the window we just created, because it is stupid
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
@@ -79,9 +80,6 @@ int main()
 	// tell GLFW to capture our mouse
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	//Tells GLFW we would like to use the window we just created, because it is stupid
-	glfwMakeContextCurrent(window);
-
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
@@ -89,24 +87,36 @@ int main()
 	}
 
 	Shader ourShader("3.3.shader.vs", "3.3.shader.fs");
+	std::cout << glGetError() << std::endl; // returns 0 (no error)
 
 
 	GLfloat pyramidVertices[] = {
 			// positions			 colors				texture
-		-0.5f,  0.0f,  0.5f,	0.5f, 0.0f, 1.0f,		0.0f, 0.0f,
-		-0.5f,  0.0f, -0.5f,	1.0f, 5.0f, 0.0f,		5.0f, 0.0f, //left face
-		 0.5f,  0.0f, -0.5f,	0.0f, 1.0f, 0.5f,		5.0f, 5.0f, //bottom face
-		 0.5f,  0.0f,  0.5f,	0.5f, 0.0f, 1.0f,		5.0f, 0.0f, //front face
-		 0.0f,  0.8f,  0.0f,	1.0f, 0.5f, 0.0f,		2.0f, 5.0f,
+		-0.5f,  0.0f,  0.5f,	0.83f, 0.70f, 0.44f,		0.0f, 0.0f,
+		-0.5f,  0.0f, -0.5f,	0.83f, 0.70f, 0.44f,		1.0f, 0.0f, //left face
+		 0.5f,  0.0f, -0.5f,	0.83f, 0.70f, 0.44f,		0.0f, 0.0f, //bottom face
+		 0.5f,  0.0f,  0.5f,	0.83f, 0.70f, 0.44f,		1.0f, 0.0f, //front face
+		 0.0f,  0.8f,  0.0f,	0.92f, 0.86f, 0.76f,		0.5f, 1.0f
 	};
 
 	unsigned int pyramidIndices[] = {
-	   0, 1, 2,
-	   0, 2, 3,
-	   0, 1, 4,
-	   1, 2, 4,
-	   2, 3, 4,
-	   3, 0, 4
+	   0, 1, 4, //left face
+	   1, 2, 4, //back face
+	   2, 3, 4, //right face
+	   3, 0, 4 //front face
+	};
+
+	GLfloat pyramidBaseVertices[] = {
+		// positions			 colors				texture
+	-0.5f,  0.0f,  0.5f,	1.0f, 1.0f, 1.0f,		0.5f, -0.5f,
+	-0.5f,  0.0f, -0.5f,	1.0f, 1.0f, 1.0f,	   -0.5f, -0.5f,
+	 0.5f,  0.0f, -0.5f,	1.0f, 1.0f, 1.0f,	   -0.5f,  0.5f,
+	 0.5f,  0.0f,  0.5f,	1.0f, 1.0f, 1.0f,	    0.5f,  0.5f, 
+	};
+
+	unsigned int baseIndices[] = {
+	   0, 1, 2, // left half bottom
+	   0, 2, 3, // right half bottom
 	};
 
 
@@ -144,11 +154,31 @@ int main()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 	//________________________________________________________________________________________________________________________________
+		//Second container setup
+	glBindVertexArray(VAOs[1]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
 
+	//Stores vertices in VBO
+	glBufferData(GL_ARRAY_BUFFER, sizeof(pyramidBaseVertices), pyramidBaseVertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[1]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(baseIndices), baseIndices, GL_STATIC_DRAW);
+
+	//configures so the OpenGl knows how to use the VBO, position attributes
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	//color attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	//texture attribute
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
 		//allows OpenGl to account for the depth of the container
 	glEnable(GL_DEPTH_TEST);
 
-	unsigned int texture1, texture2;
+	unsigned int texture1;
 	// texture 1
 	// ---------
 	glGenTextures(1, &texture1);
@@ -177,8 +207,7 @@ int main()
 	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
 	// -------------------------------------------------------------------------------------------
 	ourShader.use();
-	ourShader.setInt("texture1", 0);
-
+	std::cout << glGetError() << std::endl; // returns 0 (no error)
 
 	//A loop so that the window won't be terminated immediately
 	while (!glfwWindowShouldClose(window))
@@ -193,9 +222,7 @@ int main()
 		processInput(window);
 
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		ourShader.use();
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 		//initializes a projection matrix (needed to be added after moving projectiosn to if statement
 		glm::mat4 projection;
@@ -218,7 +245,7 @@ int main()
 		glm::mat4 view = camera.GetViewMatrix();
 		ourShader.setMat4("view", view);
 
-		//render the Rubik's cube
+		//render the Pyramid faces
 		glBindVertexArray(VAOs[0]);
 
 		for (unsigned int i = 0; i < 1; i++)
@@ -242,6 +269,29 @@ int main()
 			ourShader.setMat4("model", model);
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(pyramidIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		}
+		glBindVertexArray(VAOs[1]);
+		for (unsigned int i = 0; i < 1; i++)
+
+		{
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture1);
+
+			//initializes matrix to identity matrix
+			glm::mat4 model = glm::mat4(1.0f);
+
+			//moves the 3D object around the world
+			model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+
+			//Rotates the objects over the degees and x, y, z axis
+			model = glm::rotate(model, glm::radians(10.0f), glm::vec3(0.0, 1.0f, 0.0f));
+
+			//changes the size of the object
+			model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+
+			ourShader.setMat4("model", model);
+			//draws the triangles
+			glDrawElements(GL_TRIANGLES, sizeof(baseIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
 
 		glfwSwapBuffers(window);
