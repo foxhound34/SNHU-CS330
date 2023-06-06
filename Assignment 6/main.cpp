@@ -95,25 +95,37 @@ int main()
 
 	Shader lightingShader("2.2.basic_lighting.vs", "2.2.basic_lighting.fs");
 	Shader lightCubeShader("2.2.light_cube.vs", "2.2.light_cube.fs");
+	std::cout << glGetError() << std::endl; // returns 0 (no error)
 
 	//Vertex and Indices from freecodecamp.com
 	GLfloat pyramidVertices[] = {
 		// positions			 Normals				texture
 	-0.5f,  0.0f,  0.5f,	0.0f, -1.0f, 0.0f,		    0.0f, 0.0f,//left face
-	-0.5f,  0.0f, -0.5f,	0.0f, -1.0f, 0.0f,		    5.0f, 0.0f, //left face
-	 0.5f,  0.0f, -0.5f,	0.847f, -0.53f, 0.0f,		5.0f, 5.0f, //bottom face
-	 0.5f,  0.0f,  0.5f,	0.0f, -0.53f, 0.848f,		5.0f, 0.0f, //front face
-	 0.0f,  0.8f,  0.0f,	0.0f, -0.53f, 0.848f,		2.0f, 5.0f,
+	-0.5f,  0.0f, -0.5f,	0.0f, -1.0f, 0.0f,		    0.5f, 0.0f, //left face
+	 0.5f,  0.0f, -0.5f,	0.847f, -0.53f, 0.0f,		0.0f, 0.0f, //bottom face
+	 0.5f,  0.0f,  0.5f,	0.0f, -0.53f, 0.848f,		0.5f, 0.0f, //front face
+	 0.0f,  0.8f,  0.0f,	0.0f, -0.53f, 0.848f,		0.25f, 0.5f,
 	};
 
 	unsigned int pyramidIndices[] = {
-		//calculated normals using cross-products
-0, 1, 2,  //0.0, -1.0, 0.0
-0, 2, 3,  //0.0, -1.0, 0.0
-0, 1, 4, //0.847, -0.53, 0.0
-1, 2, 4, //0.0, -0.53, 0.848
-2, 3, 4, //-0.848, -0.53, 0.0
-3, 0, 4 //0.0, -0.53, 0.848
+				  //calculated normals using cross-products
+		0, 1, 4, //0.847, -0.53, 0.0
+		1, 2, 4, //0.0, -0.53, 0.848
+		2, 3, 4, //-0.848, -0.53, 0.0
+		3, 0, 4 //0.0, -0.53, 0.848
+	};
+
+	GLfloat pyramidBaseVertices[] = {
+		// positions			 Normals				texture
+	-0.5f,  0.0f,  0.5f,	0.0f,   -1.0f,  0.0f,		0.5f, -0.5f,
+	-0.5f,  0.0f, -0.5f,	0.0f,   -1.0f,  0.0f,	   -0.5f, -0.5f,
+	 0.5f,  0.0f, -0.5f,	0.847f, -0.53f, 0.0f,      -0.5f,  0.5f,
+	 0.5f,  0.0f,  0.5f,	0.0f,   -0.53f, 0.848f,	    0.5f,  0.5f,
+	};
+
+	unsigned int baseIndices[] = {
+		0, 1, 2,  //0.0, -1.0, 0.0
+		0, 2, 3,  //0.0, -1.0, 0.0
 	};
 
 	GLfloat lightVertices[] = {
@@ -173,13 +185,13 @@ int main()
 	// Vertex Array Object, Vertex Buffer Object, Element Array Object
 	// VAO must be generated befor the VBO
 	//In this example I am making two objects, one for each triangle
-	GLuint VAOs[2], VBOs[2], EBOs[2];
-	glGenVertexArrays(2, VAOs);
-	glGenBuffers(2, VBOs);
-	glGenBuffers(2, EBOs);
+	GLuint VAOs[3], VBOs[3], EBOs[3];
+	glGenVertexArrays(3, VAOs);
+	glGenBuffers(3, VBOs);
+	glGenBuffers(3, EBOs);
 
 	//______________________________________________________________________________________________________________________________
-	//Pyramid container setup
+	//Pyramid sides container setup
 	glBindVertexArray(VAOs[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
 
@@ -201,6 +213,29 @@ int main()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 	//________________________________________________________________________________________________________________________________
+	//Pyramid base container setup
+	glBindVertexArray(VAOs[2]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
+
+	//Stores vertices in VBO
+	glBufferData(GL_ARRAY_BUFFER, sizeof(pyramidBaseVertices), pyramidBaseVertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[2]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(baseIndices), baseIndices, GL_STATIC_DRAW);
+
+	//configures so the OpenGl knows how to use the VBO, position attributes
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	//Normal attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	//texture attribute
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+
+//__________________________________________________________________________________________________________________________
 	//Keylight setup
 	glBindVertexArray(VAOs[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
@@ -268,6 +303,7 @@ int main()
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 		lightingShader.use();
+		std::cout << glGetError() << std::endl; // returns 0 (no error)
 
 		//sets the color of the object and the light source
 		//ObjectColor and LightColor are multiplyed to give the color we percieve
@@ -277,6 +313,7 @@ int main()
 		lightingShader.setVec3("lightPos", keyLightPos);
 		lightingShader.setVec3("viewPos", camera.Position);
 		lightingShader.setInt("texture1", 0);
+		std::cout << glGetError() << std::endl; // returns 0 (no error)
 
 		//initializes a projection matrix (needed to be added after moving projectiosn to if statement
 		glm::mat4 projection;
@@ -296,7 +333,9 @@ int main()
 		glm::mat4 view = camera.GetViewMatrix();
 		lightingShader.setMat4("projection", projection);
 		lightingShader.setMat4("view", view);
+		std::cout << glGetError() << std::endl; // returns 0 (no error)
 
+		glBindVertexArray(VAOs[0]);
 		//_________________________________
 		//								  -    
 		//    Render the Pyramid          -
@@ -323,6 +362,34 @@ int main()
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(pyramidIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
+		glBindVertexArray(VAOs[2]);
+		//_________________________________
+		//								  -    
+		//    Render the Pyramid  Base    -
+		//_________________________________
+		for (unsigned int i = 0; i < 1; i++)
+		{
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture1);
+
+			//initializes matrix to identity matrix
+			glm::mat4 model = glm::mat4(1.0f);
+			lightingShader.setMat4("model", model);
+
+			//moves the 3D object around the world
+			model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+
+			//Rotates the objects over the degees and x, y, z axis
+			model = glm::rotate(model, glm::radians(10.0f), glm::vec3(0.0, 1.0f, 0.0f));
+
+			//changes the size of the object
+			model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+
+			glBindVertexArray(VAOs[2]);
+			//draws the triangles
+			glDrawElements(GL_TRIANGLES, sizeof(baseIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		}
+		glBindVertexArray(VAOs[1]);
 		//_________________________________
 		//								  -    
 		//    Render the Key Light cube   -
@@ -354,8 +421,9 @@ int main()
 
 		//_________________________________
 		//								  -
-		//    Render the Fix Light cube   -
+		//    Render the Fill Light cube   -
 		//_________________________________
+		glBindVertexArray(VAOs[1]);
 		for (unsigned int i = 0; i < 1; i++)
 		{
 			// also draw the lamp object
@@ -388,9 +456,9 @@ int main()
 	}
 
 	//De-allocates resources
-	glDeleteVertexArrays(2, VAOs);
-	glDeleteBuffers(2, VBOs);
-	glDeleteBuffers(2, EBOs);
+	glDeleteVertexArrays(3, VAOs);
+	glDeleteBuffers(3, VBOs);
+	glDeleteBuffers(3, EBOs);
 
 	glfwDestroyWindow(window); //Terminates the window
 	glfwTerminate(); //Terminates GLFW
