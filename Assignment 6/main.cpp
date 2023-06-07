@@ -44,10 +44,20 @@ bool perspective = false;
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
 
-//Sets the location in the space of the lights
-glm::vec3 keyLightPos(0.0f, 0.5f, 1.0f);
-glm::vec3 fixLightPos(0.0f, 0.2f, -1.5f);
+//Sets the location of the cubes at point of the light source
+glm::vec3 pointLightPositions[] = {
 
+	glm::vec3 (0.0f, 0.5f, 1.0f),
+	glm::vec3 (0.0f, 0.2f, -1.5f),
+
+};
+
+//Changes the color of the light source
+glm::vec3 pointLightColors[] = {
+	glm::vec3(0.0f, 1.0f, 0.0f), //green
+	glm::vec3(1.0f, 1.0f, 1.0f), //white
+
+};
 
 int main()
 {
@@ -101,10 +111,10 @@ int main()
 	GLfloat pyramidVertices[] = {
 		// positions			 Normals				texture
 	-0.5f,  0.0f,  0.5f,	0.0f, -1.0f, 0.0f,		    0.0f, 0.0f,//left face
-	-0.5f,  0.0f, -0.5f,	0.0f, -1.0f, 0.0f,		    0.5f, 0.0f, //left face
+	-0.5f,  0.0f, -0.5f,	0.0f, -1.0f, 0.0f,		    1.0f, 0.0f, //left face
 	 0.5f,  0.0f, -0.5f,	0.847f, -0.53f, 0.0f,		0.0f, 0.0f, //bottom face
-	 0.5f,  0.0f,  0.5f,	0.0f, -0.53f, 0.848f,		0.5f, 0.0f, //front face
-	 0.0f,  0.8f,  0.0f,	0.0f, -0.53f, 0.848f,		0.25f, 0.5f,
+	 0.5f,  0.0f,  0.5f,	0.0f, -0.53f, 0.848f,		1.0f, 0.0f, //front face
+	 0.0f,  0.8f,  0.0f,	0.0f, -0.53f, 0.848f,		0.5f, 1.0f,
 	};
 
 	unsigned int pyramidIndices[] = {
@@ -303,16 +313,43 @@ int main()
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 		lightingShader.use();
-		std::cout << glGetError() << std::endl; // returns 0 (no error)
+        lightingShader.setVec3("viewPos", camera.Position);
+        lightingShader.setFloat("material.shininess", 32.0f);
 
-		//sets the color of the object and the light source
-		//ObjectColor and LightColor are multiplyed to give the color we percieve
-		lightingShader.setVec3("objectColor", 0.0f, 1.0f, 0.0f);
-		lightingShader.setVec3("lightColor", 1.0f, 0.5f, 0.31f);
 
-		lightingShader.setVec3("lightPos", keyLightPos);
-		lightingShader.setVec3("viewPos", camera.Position);
-		lightingShader.setInt("texture1", 0);
+        // point light 1
+        lightingShader.setVec3("pointLights[0].position", pointLightPositions[0].x, pointLightPositions[0].y, pointLightPositions[0].z);
+		lightingShader.setVec3("pointLights[0].ambient", pointLightColors[0].x * 0.1, pointLightColors[0].y * 0.1, pointLightColors[0].z * 0.1);
+        lightingShader.setVec3("pointLights[0].diffuse", pointLightColors[0].x, pointLightColors[0].y, pointLightColors[0].z);
+        lightingShader.setVec3("pointLights[0].specular", pointLightColors[0].x, pointLightColors[0].y, pointLightColors[0].z);
+        lightingShader.setFloat("pointLights[0].constant", 1.0f);
+        lightingShader.setFloat("pointLights[0].linear", 0.09f);
+        lightingShader.setFloat("pointLights[0].quadratic", 0.032f);
+        // point light 2
+		lightingShader.setVec3("pointLights[1].position", pointLightPositions[1].x, pointLightPositions[1].y, pointLightPositions[1].z);
+		lightingShader.setVec3("pointLights[1].ambient", pointLightColors[1].x * 0.1, pointLightColors[1].y * 0.1, pointLightColors[1].z * 0.1);
+		lightingShader.setVec3("pointLights[1].diffuse", pointLightColors[1].x, pointLightColors[1].y, pointLightColors[1].z);
+		lightingShader.setVec3("pointLights[1].specular", pointLightColors[1].x, pointLightColors[1].y, pointLightColors[1].z);
+        lightingShader.setFloat("pointLights[1].constant", 1.0f);
+        lightingShader.setFloat("pointLights[1].linear", 0.09f);
+        lightingShader.setFloat("pointLights[1].quadratic", 0.032f);
+        // point light 3
+        lightingShader.setVec3("pointLights[2].position", pointLightPositions[2]);
+        lightingShader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
+        lightingShader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
+        lightingShader.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
+        lightingShader.setFloat("pointLights[2].constant", 1.0f);
+        lightingShader.setFloat("pointLights[2].linear", 0.09f);
+        lightingShader.setFloat("pointLights[2].quadratic", 0.032f);
+        // point light 4
+        lightingShader.setVec3("pointLights[3].position", pointLightPositions[3]);
+        lightingShader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
+        lightingShader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
+        lightingShader.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
+        lightingShader.setFloat("pointLights[3].constant", 1.0f);
+        lightingShader.setFloat("pointLights[3].linear", 0.09f);
+        lightingShader.setFloat("pointLights[3].quadratic", 0.032f);    
+
 		std::cout << glGetError() << std::endl; // returns 0 (no error)
 
 		//initializes a projection matrix (needed to be added after moving projectiosn to if statement
@@ -392,9 +429,10 @@ int main()
 		glBindVertexArray(VAOs[1]);
 		//_________________________________
 		//								  -    
-		//    Render the Key Light cube   -
+		//    Render the Light cubes      -
+		//     with the light source      -
 		//_________________________________
-		for (unsigned int i = 0; i < 1; i++)
+		for (unsigned int i = 0; i < 2; i++)
 		{
 			// also draw the lamp object
 			lightCubeShader.use();
@@ -404,41 +442,11 @@ int main()
 			//initializes matrix to identity matrix
 			glm::mat4 model = glm::mat4(1.0f);
 
-			//moves the 3D object around the world
-			model = glm::translate(model, keyLightPos);
+			//Places the cubes and the light source at the same location
+			model = glm::translate(model, pointLightPositions[i]);
 
 			//Rotates the objects over the degees and x, y, z axis
-			model = glm::rotate(model, glm::radians(-15.0f), glm::vec3(1.0, 0.0f, 0.0f));
-
-			//changes the size of the object
-			model = glm::scale(model, glm::vec3(0.1f));
-			lightCubeShader.setMat4("model", model);
-
-			glBindVertexArray(VAOs[1]);
-			//draws the triangles
-			glDrawElements(GL_TRIANGLES, sizeof(lightIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
-		}
-
-		//_________________________________
-		//								  -
-		//    Render the Fill Light cube   -
-		//_________________________________
-		glBindVertexArray(VAOs[1]);
-		for (unsigned int i = 0; i < 1; i++)
-		{
-			// also draw the lamp object
-			lightCubeShader.use();
-			lightCubeShader.setMat4("projection", projection);
-			lightCubeShader.setMat4("view", view);
-
-			//initializes matrix to identity matrix
-			glm::mat4 model = glm::mat4(1.0f);
-
-			//moves the 3D object around the world
-			model = glm::translate(model, fixLightPos);
-
-			//Rotates the objects over the degees and x, y, z axis
-			model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0, 1.0f, 0.0f));
+			model = glm::rotate(model, glm::radians(1.0f), glm::vec3(1.0, 0.0f, 0.0f));
 
 			//changes the size of the object
 			model = glm::scale(model, glm::vec3(0.1f));
