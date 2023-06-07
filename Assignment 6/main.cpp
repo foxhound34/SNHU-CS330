@@ -49,7 +49,6 @@ glm::vec3 pointLightPositions[] = {
 
 	glm::vec3 (0.0f, 1.5f, 2.0f), // Key light location
 	glm::vec3 (0.0f, 0.2f, -2.0f), // Fill light location
-
 };
 
 //Changes the color of the light source
@@ -109,28 +108,27 @@ int main()
 
 	//Vertex and Indices from freecodecamp.com
 	GLfloat pyramidVertices[] = {
-		// positions			 Normals				texture
-	-0.5f,  0.0f,  0.5f,	0.0f, -1.0f, 0.0f,		    0.0f, 0.0f,//left face
-	-0.5f,  0.0f, -0.5f,	0.0f, -1.0f, 0.0f,		    1.0f, 0.0f, //left face
-	 0.5f,  0.0f, -0.5f,	0.847f, -0.53f, 0.0f,		0.0f, 0.0f, //bottom face
-	 0.5f,  0.0f,  0.5f,	0.0f, -0.53f, 0.848f,		1.0f, 0.0f, //front face
-	 0.0f,  0.8f,  0.0f,	0.0f, -0.53f, 0.848f,		0.5f, 1.0f,
+	-0.5f,  0.0f,  0.5f,	0.847f, -0.53f, 0.0f,		0.0f, 0.0f,//left face
+	-0.5f,  0.0f, -0.5f,	0.0f,   -0.53f, 0.848f,		1.0f, 0.0f, //left face
+	 0.5f,  0.0f, -0.5f,   -0.848f, -0.53f, 0.0f,		0.0f, 0.0f, //bottom face
+	 0.5f,  0.0f,  0.5f,	0.0f,   -0.53f, 0.0f,		1.0f, 0.0f, //front face
+	 0.0f,  0.8f,  0.0f,	0.0f,    0.0f,  0.0f,		0.5f, 1.0f,
 	};
 
 	unsigned int pyramidIndices[] = {
 				  //calculated normals using cross-products
-		0, 1, 4, //0.847, -0.53, 0.0
-		1, 2, 4, //0.0, -0.53, 0.848
-		2, 3, 4, //-0.848, -0.53, 0.0
-		3, 0, 4 //0.0, -0.53, 0.848
+		0, 1, 4, //0.847, -0.53, 0.0 Left face
+		1, 2, 4, //0.0, -0.53, 0.848 back face
+		2, 3, 4, //-0.848, -0.53, 0.0 right face
+		3, 0, 4 //0.0, -0.53, 0.848 front face
 	};
 
 	GLfloat pyramidBaseVertices[] = {
 		// positions			 Normals				texture
-	-0.5f,  0.0f,  0.5f,	0.0f,   0.0f,  0.0f,		0.5f, -0.5f,
-	-0.5f,  0.0f, -0.5f,	0.0f,   0.0f,  0.0f,	   -0.5f, -0.5f,
-	 0.5f,  0.0f, -0.5f,	0.0f,   0.0f,  0.0f,      -0.5f,  0.5f,
-	 0.5f,  0.0f,  0.5f,	0.0f,   0.0f,  0.0f,	    0.5f,  0.5f,
+	-0.5f,  0.0f,  0.5f,	0.0f, 0.0f, 0.0f,		0.5f, -0.5f,
+	-0.5f,  0.0f, -0.5f,	0.0f, -1.0f, 0.0f,	   -0.5f, -0.5f,
+	 0.5f,  0.0f, -0.5f,	0.0f,  0.0f, 0.0f,	   -0.5f,  0.5f,
+	 0.5f,  0.0f,  0.5f,	0.0f, -1.0f, 0.0f,	    0.5f,  0.5f,
 	};
 
 	unsigned int baseIndices[] = {
@@ -312,12 +310,12 @@ int main()
 		//activates shader when setting uniforms/drawing objects
 		lightingShader.use();
         lightingShader.setVec3("viewPos", camera.Position);
-        lightingShader.setFloat("material.shininess", 32.0f);
+        lightingShader.setFloat("material.shininess", 2.0f);
 
 
         // Fixed light 1
         lightingShader.setVec3("pointLights[0].position", pointLightPositions[0].x, pointLightPositions[0].y, pointLightPositions[0].z);
-		lightingShader.setVec3("pointLights[0].ambient", pointLightColors[0].x * 0.0, pointLightColors[0].y * 0.5, pointLightColors[0].z * 0.0); //sets color intensity
+		lightingShader.setVec3("pointLights[0].ambient", pointLightColors[0].x * 0.0, pointLightColors[0].y * 1.0, pointLightColors[0].z * 0.0); //sets color intensity
         lightingShader.setVec3("pointLights[0].diffuse", pointLightColors[0].x, pointLightColors[0].y, pointLightColors[0].z);
         lightingShader.setVec3("pointLights[0].specular", pointLightColors[0].x, pointLightColors[0].y, pointLightColors[0].z);
         lightingShader.setFloat("pointLights[0].constant", 1.0f);
