@@ -348,8 +348,9 @@ int main()
 
 		// camera/view transformation
 		glm::mat4 view = camera.GetViewMatrix();
-		lightingShader.setMat4("projection", projection);
 		lightingShader.setMat4("view", view);
+		lightingShader.setMat4("projection", projection);
+		
 		std::cout << glGetError() << std::endl; // returns 0 (no error)
 
 		glBindVertexArray(VAOs[0]);
@@ -364,7 +365,6 @@ int main()
 
 			//initializes matrix to identity matrix
 			glm::mat4 model = glm::mat4(1.0f);
-			lightingShader.setMat4("model", model);
 
 			//moves the 3D object around the world
 			model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
@@ -375,7 +375,8 @@ int main()
 			//changes the size of the object
 			model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
 
-			glBindVertexArray(VAOs[0]);
+			lightingShader.setMat4("model", model);
+
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(pyramidIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
@@ -391,7 +392,7 @@ int main()
 
 			//initializes matrix to identity matrix
 			glm::mat4 model = glm::mat4(1.0f);
-			lightingShader.setMat4("model", model);
+			
 
 			//moves the 3D object around the world
 			model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
@@ -402,7 +403,7 @@ int main()
 			//changes the size of the object
 			model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
 
-			glBindVertexArray(VAOs[2]);
+			lightingShader.setMat4("model", model);
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(baseIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
