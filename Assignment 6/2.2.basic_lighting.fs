@@ -27,7 +27,7 @@ struct PointLight {
     vec3 specular;
 };
 
-//Pre-process directive to determine how many lights we have, currently set to two.
+//pre processed directive to determine number of lights. Currently set to two.
 #define NR_POINT_LIGHTS 2
 
 in vec3 FragPos;
