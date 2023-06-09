@@ -27,18 +27,18 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
-const unsigned int WIDTH = 800;
-const unsigned int HEIGHT = 600;
+const unsigned int WIDTH = 800; // Sets the window witdth
+const unsigned int HEIGHT = 600; // Sets the window height
 float MovementSpeed = 5.0f;
 
 // camera
-Camera camera(glm::vec3(0.0f, 1.5f, 4.0f));
+Camera camera(glm::vec3(0.0f, 1.5f, 4.0f)); //sets the camera location
 float lastX = WIDTH / 2.0f;
 float lastY = HEIGHT / 2.0f;
 bool firstMouse = true;
 
 //sets the perspective
-bool perspective = false;
+bool perspective = false; // Sets perspective bool variable
 
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
@@ -108,26 +108,44 @@ int main()
 
 	//Vertex and Indices from freecodecamp.com
 	GLfloat pyramidVertices[] = {
-	-0.5f,  0.0f,  0.5f,	0.847f, -0.53f, 0.0f,		0.0f, 0.0f,//left face
-	-0.5f,  0.0f, -0.5f,	0.0f,   -0.53f, 0.848f,		1.0f, 0.0f, //left face
-	 0.5f,  0.0f, -0.5f,   -0.848f, -0.53f, 0.0f,		0.0f, 0.0f, //bottom face
-	 0.5f,  0.0f,  0.5f,	0.0f,   -0.53f, 0.0f,		1.0f, 0.0f, //front face
-	 0.0f,  0.8f,  0.0f,	0.0f,    0.0f,  0.0f,		0.5f, 1.0f,
+
+	// Coordinates		 /       Normals		/     TexCoord
+	-0.5f,  0.0f,  0.5f,	0.0f, -1.0f, 0.0f,		0.0f, 0.0f,//left face
+	-0.5f,  0.0f, -0.5f,	0.0f, -1.0f, 0.0f,		0.0f, 1.0f, //left face
+	 0.5f,  0.0f, -0.5f,    0.0f, -1.0f, 0.0f,		1.0f, 1.0f, //bottom face
+	 0.5f,  0.0f,  0.5f,	0.0f, -1.0f, 0.0f,		1.0f, 0.0f, //front face
+
+	 -0.5f,  0.0f,  0.5f,	-0.8f, 0.5f, 0.0f,		0.0f, 0.0f,//left face
+	 -0.5f,  0.0f, -0.5f,	-0.8f, 0.5f, 0.0f,		1.0f, 0.0f, //left face
+	  0.0f,  0.8f,  0.0f,	-0.8f, 0.5f, 0.0f,		0.5f, 1.0f,
+
+	 -0.5f,  0.0f, -0.5f,    0.0f,  0.5f, -0.8f,	1.0f, 0.0f, //bottom face
+	  0.5f,  0.0f, -0.5f,	 0.0f,  0.5f, -0.8f,	0.0f, 0.0f, //front face
+	  0.0f,  0.8f,  0.0f,	 0.0f,  0.5f, -0.8f,	0.5f, 1.0f,
+
+     0.5f,  0.0f, -0.5f,    0.8f,  0.5f, 0.0f,		0.0f, 0.0f, //bottom face
+	 0.5f,  0.0f,  0.5f,	0.8f,  0.5f, 0.0f,		1.0f, 0.0f, //front face
+	 0.0f,  0.8f,  0.0f,	0.8f,  0.5f, 0.0f,		0.5f, 1.0f,
+
+	  0.5f,  0.0f,  0.5f,   0.0f, 0.5f, 0.8f,		1.0f, 0.0f, //bottom face
+	 -0.5f,  0.0f,  0.5f,	0.0f, 0.5f, 0.8f,		0.0f, 0.0f, //front face
+	  0.0f,  0.8f,  0.0f,	0.0f, 0.5f, 0.8f,		0.5f, 1.0f,
 	};
 
 	unsigned int pyramidIndices[] = {
-				  //calculated normals using cross-products
-		0, 1, 4, //0.847, -0.53, 0.0 Left face
-		1, 2, 4, //0.0, -0.53, 0.848 back face
-		2, 3, 4, //-0.848, -0.53, 0.0 right face
-		3, 0, 4 //0.0, -0.53, 0.848 front face
+		0, 1, 2, // Bottom side
+		0, 2, 3, // Bottom side
+		4, 6, 5, // Left side
+		7, 9, 8, // Non-facing side
+		10, 12, 11, // Right side
+		13, 15, 14 // Facing side
 	};
 
 	GLfloat pyramidBaseVertices[] = {
 		// positions			 Normals				texture
-	-0.5f,  0.0f,  0.5f,	0.0f, 0.0f, 0.0f,		0.5f, -0.5f,
+	-0.5f,  0.0f,  0.5f,	0.0f, -1.0f, 0.0f,		0.5f, -0.5f,
 	-0.5f,  0.0f, -0.5f,	0.0f, -1.0f, 0.0f,	   -0.5f, -0.5f,
-	 0.5f,  0.0f, -0.5f,	0.0f,  0.0f, 0.0f,	   -0.5f,  0.5f,
+	 0.5f,  0.0f, -0.5f,	0.0f, -1.0f, 0.0f,	   -0.5f,  0.5f,
 	 0.5f,  0.0f,  0.5f,	0.0f, -1.0f, 0.0f,	    0.5f,  0.5f,
 	};
 
@@ -193,10 +211,10 @@ int main()
 	// Vertex Array Object, Vertex Buffer Object, Element Array Object
 	// VAO must be generated befor the VBO
 	//In this example I am making two objects, one for each triangle
-	GLuint VAOs[3], VBOs[3], EBOs[3];
-	glGenVertexArrays(3, VAOs);
-	glGenBuffers(3, VBOs);
-	glGenBuffers(3, EBOs);
+	GLuint VAOs[3], VBOs[2], EBOs[2];
+	glGenVertexArrays(2, VAOs);
+	glGenBuffers(2, VBOs);
+	glGenBuffers(2, EBOs);
 
 	//______________________________________________________________________________________________________________________________
 	//Pyramid sides container setup
@@ -221,29 +239,7 @@ int main()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 	//________________________________________________________________________________________________________________________________
-	//Pyramid base container setup
-	glBindVertexArray(VAOs[2]);
-	glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
 
-	//Stores vertices in VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(pyramidBaseVertices), pyramidBaseVertices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[2]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(baseIndices), baseIndices, GL_STATIC_DRAW);
-
-	//configures so the OpenGl knows how to use the VBO, position attributes
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	//Normals attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
-	//texture attribute
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
-
-//__________________________________________________________________________________________________________________________
 	//light setup
 	glBindVertexArray(VAOs[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
@@ -259,7 +255,6 @@ int main()
 	glEnableVertexAttribArray(0);
 
 	//______________________________________________________________________________________________________________________________________
-
 
 	unsigned int texture1;
 	// texture 1
@@ -315,7 +310,7 @@ int main()
 
         // Fixed light 1
         lightingShader.setVec3("pointLights[0].position", pointLightPositions[0].x, pointLightPositions[0].y, pointLightPositions[0].z);
-		lightingShader.setVec3("pointLights[0].ambient", pointLightColors[0].x * 0.0, pointLightColors[0].y * 1.0, pointLightColors[0].z * 0.0); //sets color intensity
+		lightingShader.setVec3("pointLights[0].ambient", pointLightColors[0].x * 0.0, pointLightColors[0].y * 1.0, pointLightColors[0].z * 0.0); //sets color intensity to 100%
         lightingShader.setVec3("pointLights[0].diffuse", pointLightColors[0].x, pointLightColors[0].y, pointLightColors[0].z);
         lightingShader.setVec3("pointLights[0].specular", pointLightColors[0].x, pointLightColors[0].y, pointLightColors[0].z);
         lightingShader.setFloat("pointLights[0].constant", 1.0f);
@@ -324,7 +319,7 @@ int main()
 
         // Fill light 1
 		lightingShader.setVec3("pointLights[1].position", pointLightPositions[1].x, pointLightPositions[1].y, pointLightPositions[1].z);
-		lightingShader.setVec3("pointLights[1].ambient", pointLightColors[1].x * 1.0, pointLightColors[1].y * 1.0, pointLightColors[1].z * 1.0); //sets color intesity
+		lightingShader.setVec3("pointLights[1].ambient", pointLightColors[1].x * 0.1, pointLightColors[1].y * 0.1, pointLightColors[1].z * 0.1); //sets color intesity to 10%
 		lightingShader.setVec3("pointLights[1].diffuse", pointLightColors[1].x, pointLightColors[1].y, pointLightColors[1].z);
 		lightingShader.setVec3("pointLights[1].specular", pointLightColors[1].x, pointLightColors[1].y, pointLightColors[1].z);
         lightingShader.setFloat("pointLights[1].constant", 1.0f);
@@ -340,7 +335,7 @@ int main()
 		if (!perspective)
 		{
 			//orth perspective
-			projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 100.0f);
+			projection = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, 0.1f, 100.0f);
 		}
 		//projection perspective
 		else
@@ -380,34 +375,6 @@ int main()
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(pyramidIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
-		glBindVertexArray(VAOs[2]);
-		//_________________________________
-		//								  -    
-		//    Render the Pyramid  Base    -
-		//_________________________________
-		for (unsigned int i = 0; i < 1; i++)
-		{
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture1);
-
-			//initializes matrix to identity matrix
-			glm::mat4 model = glm::mat4(1.0f);
-			
-
-			//moves the 3D object around the world
-			model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-
-			//Rotates the objects over the degees and x, y, z axis
-			model = glm::rotate(model, glm::radians(10.0f), glm::vec3(0.0, 1.0f, 0.0f));
-
-			//changes the size of the object
-			model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-
-			lightingShader.setMat4("model", model);
-			//draws the triangles
-			glDrawElements(GL_TRIANGLES, sizeof(baseIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
-		}
-
 		// also draw the lamp object
 		lightCubeShader.use();
 		lightCubeShader.setMat4("projection", projection);
@@ -446,9 +413,9 @@ int main()
 	}
 
 	//De-allocates resources
-	glDeleteVertexArrays(3, VAOs);
-	glDeleteBuffers(3, VBOs);
-	glDeleteBuffers(3, EBOs);
+	glDeleteVertexArrays(2, VAOs);
+	glDeleteBuffers(2, VBOs);
+	glDeleteBuffers(2, EBOs);
 
 	glfwDestroyWindow(window); //Terminates the window
 	glfwTerminate(); //Terminates GLFW
