@@ -47,12 +47,16 @@ float lastFrame = 0.0f;
 //Sets the location of the cubes at point of the light source
 glm::vec3 pointLightPositions[] = {
 
-	glm::vec3(0.0f, 1.5f, 2.0f), // Key light location
-	glm::vec3(0.0f, 0.2f, -2.0f), // Fill light location
+	glm::vec3( 2.0f, 2.0f, -14.0f), // Key light location
+	glm::vec3(-2.0f, 2.0f, -14.0f), // Fill light location
+	glm::vec3(-8.0f, 2.0f, -14.0f), // Fill light location
+	glm::vec3( 8.0f, 2.0f, -14.0f), // Fill light location
 };
 
 //Changes the color of the light source
 glm::vec3 pointLightColors[] = {
+	glm::vec3(1.0f, 1.0f, 1.0f), //white 
+	glm::vec3(1.0f, 1.0f, 1.0f), //white
 	glm::vec3(1.0f, 1.0f, 1.0f), //white 
 	glm::vec3(1.0f, 1.0f, 1.0f), //white
 
@@ -166,12 +170,12 @@ int main()
 	//  ++++++++++++++++++++++++++++++
 	GLfloat tableVertices[] = {
 		// positions			// Normals			texture
-		-2.0f,  -1.0f, -2.0f,	1.0f, 1.0f, 1.0f,	0.0f, 0.0f,
-		 2.0f,  -1.0f, -2.0f,	1.0f, 1.0f, 1.0f,	1.0f, 0.0f,
-		 2.0f,  -1.0f,  2.0f,	1.0f, 1.0f, 1.0f,	1.0f, 1.0f,
-		 2.0f,  -1.0f,  2.0f,	1.0f, 1.0f, 1.0f,	1.0f, 0.0f,
-		-2.0f,  -1.0f,  2.0f,	1.0f, 1.0f, 1.0f,	0.0f, 0.0f,
-		-2.0f,  -1.0f, -2.0f,	1.0f, 1.0f, 1.0f,	0.0f, 1.0f,
+		-2.0f,  -1.0f, -2.0f,	0.0f, -1.0f, 0.0f,	0.0f, 0.0f,
+		 2.0f,  -1.0f, -2.0f,	0.0f, -1.0f, 0.0f,	1.0f, 0.0f,
+		 2.0f,  -1.0f,  2.0f,	0.0f, -1.0f, 0.0f,	1.0f, 1.0f,
+		 2.0f,  -1.0f,  2.0f,	0.0f, -1.0f, 0.0f,	1.0f, 0.0f,
+		-2.0f,  -1.0f,  2.0f,	0.0f, -1.0f, 0.0f,	0.0f, 0.0f,
+		-2.0f,  -1.0f, -2.0f,	0.0f, -1.0f, 0.0f,	0.0f, 1.0f,
 	};
 
 	unsigned int tableIndices[] = {
@@ -187,16 +191,22 @@ int main()
 	//  ++++++++++++++++++++++++++++++
 	GLfloat computerVertices[] = {
 		// positions               Normals           texture
-		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+		 0.5f,  0.5f, 0.0f,   0.0f, 0.0f, -1.0f,   1.0f, 1.0f, // top right
+		 0.5f, -0.5f, 0.0f,   0.0f, 0.0f, -1.0f,   1.0f, 0.0f, // bottom right
+		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, -1.0f,   0.0f, 0.0f, // bottom left
+		-0.5f,  0.5f, 0.0f,   0.0f, 0.0f, -1.0f,   0.0f, 1.0f  // top left 
 	};
 
 	unsigned int computerIndices[] = {
 		0, 1, 3, // first triangle
 		1, 2, 3  // second triangle
 	};
+
+	//  ++++++++++++++++++++++++++++++
+	//  +                            +
+	//  +    Light Cubes Mesh        +
+	//	+                            +
+	//  ++++++++++++++++++++++++++++++
 
 	GLfloat lightVertices[] = {
 		// positions         // colors
@@ -483,6 +493,8 @@ int main()
 	}
 	stbi_image_free(data5);
 
+
+
 	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
 	// -------------------------------------------------------------------------------------------
 	// be sure to activate shader when setting uniforms/drawing objects
@@ -511,7 +523,7 @@ int main()
 
 		// Fixed light 1
 		lightingShader.setVec3("pointLights[0].position", pointLightPositions[0].x, pointLightPositions[0].y, pointLightPositions[0].z);
-		lightingShader.setVec3("pointLights[0].ambient", pointLightColors[0].x * 1.0, pointLightColors[0].y * 1.0, pointLightColors[0].z * 1.0); //sets color intensity to 100%
+		lightingShader.setVec3("pointLights[0].ambient", pointLightColors[0].x * 0.1, pointLightColors[0].y * 0.1, pointLightColors[0].z * 0.1); //sets color intensity to 100%
 		lightingShader.setVec3("pointLights[0].diffuse", pointLightColors[0].x, pointLightColors[0].y, pointLightColors[0].z);
 		lightingShader.setVec3("pointLights[0].specular", pointLightColors[0].x, pointLightColors[0].y, pointLightColors[0].z);
 		lightingShader.setFloat("pointLights[0].constant", 1.0f);
@@ -520,12 +532,31 @@ int main()
 
 		// Fill light 1
 		lightingShader.setVec3("pointLights[1].position", pointLightPositions[1].x, pointLightPositions[1].y, pointLightPositions[1].z);
-		lightingShader.setVec3("pointLights[1].ambient", pointLightColors[1].x * 1.0, pointLightColors[1].y * 1.0, pointLightColors[1].z * 1.0); //sets color intesity to 10%
+		lightingShader.setVec3("pointLights[1].ambient", pointLightColors[1].x * 0.1, pointLightColors[1].y * 0.1, pointLightColors[1].z * 0.1); //sets color intesity to 10%
 		lightingShader.setVec3("pointLights[1].diffuse", pointLightColors[1].x, pointLightColors[1].y, pointLightColors[1].z);
 		lightingShader.setVec3("pointLights[1].specular", pointLightColors[1].x, pointLightColors[1].y, pointLightColors[1].z);
 		lightingShader.setFloat("pointLights[1].constant", 1.0f);
 		lightingShader.setFloat("pointLights[1].linear", 0.09f);
 		lightingShader.setFloat("pointLights[1].quadratic", 0.032f);
+		std::cout << glGetError() << std::endl; // returns 0 (no error)
+
+		// Fixed light 1
+		lightingShader.setVec3("pointLights[2].position", pointLightPositions[2].x, pointLightPositions[0].y, pointLightPositions[0].z);
+		lightingShader.setVec3("pointLights[2].ambient", pointLightColors[2].x * 1.0, pointLightColors[0].y * 1.0, pointLightColors[0].z * 1.0); //sets color intensity to 100%
+		lightingShader.setVec3("pointLights[2].diffuse", pointLightColors[2].x, pointLightColors[0].y, pointLightColors[0].z);
+		lightingShader.setVec3("pointLights[2].specular", pointLightColors[2].x, pointLightColors[0].y, pointLightColors[0].z);
+		lightingShader.setFloat("pointLights[2].constant", 1.0f);
+		lightingShader.setFloat("pointLights[2].linear", 0.09f);
+		lightingShader.setFloat("pointLights[2].quadratic", 0.032f);
+
+		// Fill light 1
+		lightingShader.setVec3("pointLights[3].position", pointLightPositions[3].x, pointLightPositions[1].y, pointLightPositions[1].z);
+		lightingShader.setVec3("pointLights[3].ambient", pointLightColors[3].x * 1.0, pointLightColors[1].y * 1.0, pointLightColors[1].z * 1.0); //sets color intesity to 10%
+		lightingShader.setVec3("pointLights[3].diffuse", pointLightColors[3].x, pointLightColors[1].y, pointLightColors[1].z);
+		lightingShader.setVec3("pointLights[3].specular", pointLightColors[3].x, pointLightColors[1].y, pointLightColors[1].z);
+		lightingShader.setFloat("pointLights[3].constant", 1.0f);
+		lightingShader.setFloat("pointLights[3].linear", 0.09f);
+		lightingShader.setFloat("pointLights[3].quadratic", 0.032f);
 		std::cout << glGetError() << std::endl; // returns 0 (no error)
 
 		//initializes a projection matrix (needed to be added after moving projectiosn to if statement
@@ -644,6 +675,69 @@ int main()
 		}
 		std::cout << glGetError() << std::endl;
 
+		//  ++++++++++++++++++++++++++++++
+		//  +                            +
+		//  +        Screen Draw         +
+		//	+                            +
+		//  ++++++++++++++++++++++++++++++
+
+		for (unsigned int i = 0; i < 1; i++)
+
+		{
+			//Overlays two textures on a single surface
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture4); //screen picture
+			bool multipleTextures = false;
+
+			//initializes matrix to identity matrix
+			glm::mat4 model = glm::mat4(1.0f);
+
+			//moves the 3D object around the world
+			model = glm::translate(model, glm::vec3(1.0f, -1.72f, -15.99f));
+
+			//Rotates the objects over the degees and x, y, z axis
+			model = glm::rotate(model, glm::radians(-45.0f), glm::vec3(1.0, 0.0f, 0.0f));
+
+			//changes the size of the object
+			model = glm::scale(model, glm::vec3(6.0f, 5.0f, 5.0f));
+
+			lightingShader.setMat4("model", model);
+			//draws the triangles
+			glDrawElements(GL_TRIANGLES, sizeof(computerIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		}
+		std::cout << glGetError() << std::endl;
+
+		//  ++++++++++++++++++++++++++++++
+		//  +                            +
+		//  +         Cover Draw         +
+		//	+                            +
+		//  ++++++++++++++++++++++++++++++
+
+		for (unsigned int i = 0; i < 1; i++)
+
+		{
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture5); //Computer Screen back
+
+			//initializes matrix to identity matrix
+			glm::mat4 model = glm::mat4(1.0f);
+
+			//moves the 3D object around the world
+			model = glm::translate(model, glm::vec3(1.0f, -5.3f, -19.53f));
+
+			//Rotates and flips the object over the degees and x, y, z axis
+			model = glm::rotate(model, glm::radians(-45.0f), glm::vec3(1.0, 0.0f, 0.0f));
+			model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0, 1.0f, 0.0f));
+
+			//changes the size of the object
+			model = glm::scale(model, glm::vec3(6.0f, 5.0f, 5.0f));
+
+			lightingShader.setMat4("model", model);
+			//draws the triangles
+			glDrawElements(GL_TRIANGLES, sizeof(computerIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		}
+		std::cout << glGetError() << std::endl;
+
 		// also draw the lamp object
 		lightCubeShader.use();
 		lightCubeShader.setMat4("projection", projection);
@@ -655,7 +749,7 @@ int main()
 		//    Render the Light cubes      -
 		//     with the light source      -
 		//_________________________________
-		for (unsigned int i = 0; i < 2; i++)
+		for (unsigned int i = 0; i < 4; i++)
 		{
 			//initializes matrix to identity matrix
 			glm::mat4 model = glm::mat4(1.0f);
