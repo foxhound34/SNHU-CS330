@@ -74,7 +74,7 @@ int main()
 #endif
 
 	//Builds a window (Width, Height, Title, Full screen, <reasons>)
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Assignment 6_Bamford", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Milestone 6_Bamford", NULL, NULL);
 
 	//error checking for window
 	if (window == NULL)
@@ -109,27 +109,48 @@ int main()
 	//Vertex and Indices from freecodecamp.com
 	GLfloat cubeVertices[] = {
 
-		// Coordinates		 /       Normals		/     TexCoord
-		-0.5f,  0.0f,  0.5f,	0.0f, -1.0f, 0.0f,		0.0f, 0.0f,//left face
-		-0.5f,  0.0f, -0.5f,	0.0f, -1.0f, 0.0f,		0.0f, 1.0f, //left face
-		 0.5f,  0.0f, -0.5f,    0.0f, -1.0f, 0.0f,		1.0f, 1.0f, //bottom face
-		 0.5f,  0.0f,  0.5f,	0.0f, -1.0f, 0.0f,		1.0f, 0.0f, //front face
+		// positions          // normals           // texture coords
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
 
-		 -0.5f,  0.0f,  0.5f,	-0.8f, 0.5f, 0.0f,		0.0f, 0.0f,//left face
-		 -0.5f,  0.0f, -0.5f,	-0.8f, 0.5f, 0.0f,		1.0f, 0.0f, //left face
-		  0.0f,  0.8f,  0.0f,	-0.8f, 0.5f, 0.0f,		0.5f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
 
-		 -0.5f,  0.0f, -0.5f,    0.0f,  0.5f, -0.8f,	1.0f, 0.0f, //bottom face
-		  0.5f,  0.0f, -0.5f,	 0.0f,  0.5f, -0.8f,	0.0f, 0.0f, //front face
-		  0.0f,  0.8f,  0.0f,	 0.0f,  0.5f, -0.8f,	0.5f, 1.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-		 0.5f,  0.0f, -0.5f,    0.8f,  0.5f, 0.0f,		0.0f, 0.0f, //bottom face
-		 0.5f,  0.0f,  0.5f,	0.8f,  0.5f, 0.0f,		1.0f, 0.0f, //front face
-		 0.0f,  0.8f,  0.0f,	0.8f,  0.5f, 0.0f,		0.5f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-		  0.5f,  0.0f,  0.5f,   0.0f, 0.5f, 0.8f,		1.0f, 0.0f, //bottom face
-		 -0.5f,  0.0f,  0.5f,	0.0f, 0.5f, 0.8f,		0.0f, 0.0f, //front face
-		  0.0f,  0.8f,  0.0f,	0.0f, 0.5f, 0.8f,		0.5f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
 	};
 
 	unsigned int cubeIndices[] = {
@@ -212,8 +233,6 @@ int main()
 	//Stores vertices in VBO
 	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[0]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
 
 	//configures so the OpenGl knows how to use the VBO, position attributes
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
@@ -361,7 +380,7 @@ int main()
 			lightingShader.setMat4("model", model);
 
 			//draws the triangles
-			glDrawElements(GL_TRIANGLES, sizeof(cubeIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 		// also draw the lamp object
 		lightCubeShader.use();
