@@ -106,7 +106,13 @@ int main()
 	Shader lightCubeShader("2.2.light_cube.vs", "2.2.light_cube.fs");
 	std::cout << glGetError() << std::endl; // returns 0 (no error)
 
-	//Vertex and Indices from freecodecamp.com
+	//Vertex and Normals from learnopengl.com
+
+		//  ++++++++++++++++++++++++++++++
+		//  +                            +
+		//  +    Ribik's Cube Mesh       +
+		//	+                            +
+		//  ++++++++++++++++++++++++++++++
 	GLfloat cubeVertices[] = {
 
 		// positions          // normals           // texture coords
@@ -153,15 +159,26 @@ int main()
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
 	};
 
-	unsigned int cubeIndices[] = {
-		0, 1, 2, // Bottom side
-		0, 2, 3, // Bottom side
-		4, 6, 5, // Left side
-		7, 9, 8, // Non-facing side
-		10, 12, 11, // Right side
-		13, 15, 14 // Facing side
+	//  ++++++++++++++++++++++++++++++
+	//  +                            +
+	//  +      Countertop Mesh       +
+	//	+                            +
+	//  ++++++++++++++++++++++++++++++
+	GLfloat tableVertices[] = {
+		// positions			// Normals			texture
+		-2.0f,  -1.0f, -2.0f,	1.0f, 1.0f, 1.0f,	0.0f, 0.0f,
+		 2.0f,  -1.0f, -2.0f,	1.0f, 1.0f, 1.0f,	1.0f, 0.0f,
+		 2.0f,  -1.0f,  2.0f,	1.0f, 1.0f, 1.0f,	1.0f, 1.0f,
+		 2.0f,  -1.0f,  2.0f,	1.0f, 1.0f, 1.0f,	1.0f, 0.0f,
+		-2.0f,  -1.0f,  2.0f,	1.0f, 1.0f, 1.0f,	0.0f, 0.0f,
+		-2.0f,  -1.0f, -2.0f,	1.0f, 1.0f, 1.0f,	0.0f, 1.0f,
 	};
 
+	unsigned int tableIndices[] = {
+	   0, 1, 2,   // first triangle
+	   3, 4, 5,
+	   6
+	};
 
 	GLfloat lightVertices[] = {
 		// positions         // colors
@@ -220,19 +237,18 @@ int main()
 	// Vertex Array Object, Vertex Buffer Object, Element Array Object
 	// VAO must be generated befor the VBO
 	//In this example I am making two objects, one for each triangle
-	GLuint VAOs[3], VBOs[2], EBOs[2];
-	glGenVertexArrays(2, VAOs);
-	glGenBuffers(2, VBOs);
-	glGenBuffers(2, EBOs);
+	GLuint VAOs[3], VBOs[3], EBOs[3];
+	glGenVertexArrays(3, VAOs);
+	glGenBuffers(3, VBOs);
+	glGenBuffers(3, EBOs);
 
 	//______________________________________________________________________________________________________________________________
-	//Pyramid sides container setup
+	//Rubik's Cube container setup
 	glBindVertexArray(VAOs[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
 
 	//Stores vertices in VBO
 	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
-
 
 	//configures so the OpenGl knows how to use the VBO, position attributes
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
@@ -246,15 +262,37 @@ int main()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 	//________________________________________________________________________________________________________________________________
-
-	//light setup
+	//Countertop container setup
 	glBindVertexArray(VAOs[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
 
 	//Stores vertices in VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(lightVertices), lightVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(tableVertices), tableVertices, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[1]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(tableIndices), tableIndices, GL_STATIC_DRAW);
+
+	//configures so the OpenGl knows how to use the VBO, position attributes
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	//Normals attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	//texture attribute
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+
+//______________________________________________________________________________________________________________
+	//light setup
+	glBindVertexArray(VAOs[2]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
+
+	//Stores vertices in VBO
+	glBufferData(GL_ARRAY_BUFFER, sizeof(lightVertices), lightVertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[2]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(lightIndices), lightIndices, GL_STATIC_DRAW);
 
 	//configures so the OpenGl knows how to use the VBO, position attributes
@@ -263,7 +301,7 @@ int main()
 
 	//______________________________________________________________________________________________________________________________________
 
-	unsigned int texture1;
+	unsigned int texture1, texture2, texture3, texture4, texture5;
 	// texture 1
 	// ---------
 	glGenTextures(1, &texture1);
@@ -288,6 +326,34 @@ int main()
 		std::cout << "Failed to load texture" << std::endl;
 	}
 	stbi_image_free(data);
+
+	//  ++++++++++++++++++++++++++++++
+	//  +                            +
+	//  +     Countertop Texture     +
+	//	+                            +
+	//  ++++++++++++++++++++++++++++++
+	glGenTextures(1, &texture2);
+	glBindTexture(GL_TEXTURE_2D, texture2);
+	// set the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// load image, create texture and generate mipmaps
+
+	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+	unsigned char* data2 = stbi_load("Granite.jpg", &width, &height, &nrChannels, 0);
+	if (data2)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data2);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data2);
 
 	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
 	// -------------------------------------------------------------------------------------------
@@ -355,12 +421,16 @@ int main()
 
 		std::cout << glGetError() << std::endl; // returns 0 (no error)
 
+		//  ++++++++++++++++++++++++++++++
+	//  +                            +
+	//  +     Ribik's Cube Draw      +
+	//	+                            +
+	//  ++++++++++++++++++++++++++++++
+
 		glBindVertexArray(VAOs[0]);
-		//_________________________________
-		//								  -    
-		//    Render the Rubik's Cube     -
-		//_________________________________
+
 		for (unsigned int i = 0; i < 1; i++)
+
 		{
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture1);
@@ -378,16 +448,48 @@ int main()
 			model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
 
 			lightingShader.setMat4("model", model);
-
 			//draws the triangles
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
+		std::cout << glGetError() << std::endl;
+
+		//  ++++++++++++++++++++++++++++++
+		//  +                            +
+		//  +      Countertop Draw       +
+		//	+                            +
+		//  ++++++++++++++++++++++++++++++
+
+		glBindVertexArray(VAOs[1]);
+
+		for (unsigned int i = 0; i < 1; i++)
+
+		{
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture2);
+
+			//initializes matrix to identity matrix
+			glm::mat4 model = glm::mat4(1.0f);
+
+			//moves the 3D object around the world
+			model = glm::translate(model, glm::vec3(0.0f, -0.3f, -13.0f));
+
+			//Rotates the objects over the degees and x, y, z axis
+			model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0, 0.0f, 0.0f));
+
+			//changes the size of the object
+			model = glm::scale(model, glm::vec3(6.0f, 5.0f, 3.0f));
+
+			lightingShader.setMat4("model", model);
+			//draws the triangles
+			glDrawElements(GL_TRIANGLES, sizeof(tableIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		}
+		std::cout << glGetError() << std::endl;
 		// also draw the lamp object
 		lightCubeShader.use();
 		lightCubeShader.setMat4("projection", projection);
 		lightCubeShader.setMat4("view", view);
 
-		glBindVertexArray(VAOs[1]);
+		glBindVertexArray(VAOs[2]);
 		//_________________________________
 		//								  -    
 		//    Render the Light cubes      -
@@ -420,9 +522,9 @@ int main()
 	}
 
 	//De-allocates resources
-	glDeleteVertexArrays(2, VAOs);
-	glDeleteBuffers(2, VBOs);
-	glDeleteBuffers(2, EBOs);
+	glDeleteVertexArrays(3, VAOs);
+	glDeleteBuffers(3, VBOs);
+	glDeleteBuffers(3, EBOs);
 
 	glfwDestroyWindow(window); //Terminates the window
 	glfwTerminate(); //Terminates GLFW
