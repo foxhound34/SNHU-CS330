@@ -180,6 +180,24 @@ int main()
 	   6
 	};
 
+	//  ++++++++++++++++++++++++++++++
+	//  +                            +
+	//  +       Computer Mesh        +
+	//	+                            +
+	//  ++++++++++++++++++++++++++++++
+	GLfloat computerVertices[] = {
+		// positions               Normals           texture
+		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+	};
+
+	unsigned int computerIndices[] = {
+		0, 1, 3, // first triangle
+		1, 2, 3  // second triangle
+	};
+
 	GLfloat lightVertices[] = {
 		// positions         // colors
 
@@ -237,10 +255,10 @@ int main()
 	// Vertex Array Object, Vertex Buffer Object, Element Array Object
 	// VAO must be generated befor the VBO
 	//In this example I am making two objects, one for each triangle
-	GLuint VAOs[3], VBOs[3], EBOs[3];
-	glGenVertexArrays(3, VAOs);
-	glGenBuffers(3, VBOs);
-	glGenBuffers(3, EBOs);
+	GLuint VAOs[6], VBOs[6], EBOs[6];
+	glGenVertexArrays(6, VAOs);
+	glGenBuffers(6, VBOs);
+	glGenBuffers(6, EBOs);
 
 	//______________________________________________________________________________________________________________________________
 	//Rubik's Cube container setup
@@ -285,14 +303,36 @@ int main()
 	glEnableVertexAttribArray(2);
 
 //______________________________________________________________________________________________________________
-	//light setup
+	//Computer container setup
 	glBindVertexArray(VAOs[2]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
 
 	//Stores vertices in VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(lightVertices), lightVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[2]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(tableIndices), tableIndices, GL_STATIC_DRAW);
+
+	//configures so the OpenGl knows how to use the VBO, position attributes
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	//Normals attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	//texture attribute
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+//___________________________________________________________________________________________________________________
+	//light setup
+	glBindVertexArray(VAOs[3]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOs[3]);
+
+	//Stores vertices in VBO
+	glBufferData(GL_ARRAY_BUFFER, sizeof(lightVertices), lightVertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[3]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(lightIndices), lightIndices, GL_STATIC_DRAW);
 
 	//configures so the OpenGl knows how to use the VBO, position attributes
@@ -302,8 +342,12 @@ int main()
 	//______________________________________________________________________________________________________________________________________
 
 	unsigned int texture1, texture2, texture3, texture4, texture5;
-	// texture 1
-	// ---------
+
+	//  ++++++++++++++++++++++++++++++
+	//  +                            +
+	//  +    Rubik's Cube Texture    +
+	//	+                            +
+	//  ++++++++++++++++++++++++++++++
 	glGenTextures(1, &texture1);
 	glBindTexture(GL_TEXTURE_2D, texture1);
 	// set the texture wrapping parameters
@@ -354,6 +398,90 @@ int main()
 		std::cout << "Failed to load texture" << std::endl;
 	}
 	stbi_image_free(data2);
+
+	//  ++++++++++++++++++++++++++++++
+	//  +                            +
+	//  +     Keyboard Texture       +
+	//	+                            +
+	//  ++++++++++++++++++++++++++++++
+	glGenTextures(1, &texture3);
+	glBindTexture(GL_TEXTURE_2D, texture3);
+	// set the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// load image, create texture and generate mipmaps
+
+	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+	unsigned char* data3 = stbi_load("Keyboard.jpg", &width, &height, &nrChannels, 0);
+	if (data3)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data3);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data3);
+
+	//  ++++++++++++++++++++++++++++++
+	//  +                            +
+	//  +  Computer Screen Texture   +
+	//	+                            +
+	//  ++++++++++++++++++++++++++++++
+	glGenTextures(1, &texture4);
+	glBindTexture(GL_TEXTURE_2D, texture4);
+	// set the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// load image, create texture and generate mipmaps
+
+	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+	unsigned char* data4 = stbi_load("Screen2.jpg", &width, &height, &nrChannels, 0);
+	if (data4)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data4);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data4);
+
+	//  ++++++++++++++++++++++++++++++
+	//  +                            +
+	//  +       Cover Texture        +
+	//	+                            +
+	//  ++++++++++++++++++++++++++++++
+	glGenTextures(1, &texture5);
+	glBindTexture(GL_TEXTURE_2D, texture5);
+	// set the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// load image, create texture and generate mipmaps
+
+	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+	unsigned char* data5 = stbi_load("computerBack.jpg", &width, &height, &nrChannels, 0);
+	if (data5)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data5);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data5);
 
 	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
 	// -------------------------------------------------------------------------------------------
@@ -422,15 +550,14 @@ int main()
 		std::cout << glGetError() << std::endl; // returns 0 (no error)
 
 		//  ++++++++++++++++++++++++++++++
-	//  +                            +
-	//  +     Ribik's Cube Draw      +
-	//	+                            +
-	//  ++++++++++++++++++++++++++++++
+		//  +                            +
+		//  +     Ribik's Cube Draw      +
+		//	+                            +
+		//  ++++++++++++++++++++++++++++++
 
 		glBindVertexArray(VAOs[0]);
 
 		for (unsigned int i = 0; i < 1; i++)
-
 		{
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture1);
@@ -484,12 +611,45 @@ int main()
 			glDrawElements(GL_TRIANGLES, sizeof(tableIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
 		std::cout << glGetError() << std::endl;
+
+		/// ++++++++++++++++++++++++++++++
+		//  +                            +
+		//  +        Keyboard Draw       +
+		//	+                            +
+		//  ++++++++++++++++++++++++++++++
+
+		glBindVertexArray(VAOs[2]);
+
+		for (unsigned int i = 0; i < 1; i++)
+
+		{
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture3); //keyboard
+
+			//initializes matrix to identity matrix
+			glm::mat4 model = glm::mat4(1.0f);
+
+			//moves the 3D object around the world
+			model = glm::translate(model, glm::vec3(1.0f, -2.75f, -13.5f));
+
+			//Rotates the objects over the degees and x, y, z axis
+			model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0, 0.0f, 0.0f));
+
+			//changes the size of the object
+			model = glm::scale(model, glm::vec3(6.0f, 5.0f, 5.0f));
+
+			lightingShader.setMat4("model", model);
+			//draws the triangles
+			glDrawElements(GL_TRIANGLES, sizeof(computerIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		}
+		std::cout << glGetError() << std::endl;
+
 		// also draw the lamp object
 		lightCubeShader.use();
 		lightCubeShader.setMat4("projection", projection);
 		lightCubeShader.setMat4("view", view);
 
-		glBindVertexArray(VAOs[2]);
+		glBindVertexArray(VAOs[3]);
 		//_________________________________
 		//								  -    
 		//    Render the Light cubes      -
@@ -522,9 +682,9 @@ int main()
 	}
 
 	//De-allocates resources
-	glDeleteVertexArrays(3, VAOs);
-	glDeleteBuffers(3, VBOs);
-	glDeleteBuffers(3, EBOs);
+	glDeleteVertexArrays(6, VAOs);
+	glDeleteBuffers(6, VBOs);
+	glDeleteBuffers(6, EBOs);
 
 	glfwDestroyWindow(window); //Terminates the window
 	glfwTerminate(); //Terminates GLFW
