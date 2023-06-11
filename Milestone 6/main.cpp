@@ -47,18 +47,20 @@ float lastFrame = 0.0f;
 //Sets the location of the cubes at point of the light source
 glm::vec3 pointLightPositions[] = {
 
-	glm::vec3( 2.0f, 2.0f, -14.0f), // Key light location
-	glm::vec3(-2.0f, 2.0f, -14.0f), // Fill light location
-	glm::vec3(-8.0f, 2.0f, -14.0f), // Fill light location
-	glm::vec3( 8.0f, 2.0f, -14.0f), // Fill light location
+	glm::vec3( 2.0f, 2.0f, -14.0f), // Key light location [0]
+	glm::vec3(-2.0f, 2.0f, -14.0f), // Key light location [1]
+	glm::vec3(-8.0f, 2.0f, -14.0f), // Key light location [2]
+	glm::vec3( 8.0f, 2.0f, -14.0f), // Key light location [3]
 };
 
 //Changes the color of the light source
+//Color used is called "Wheat" it allows for a softer white light that better replicates the intial photo.
+//I found an all white source was too harsh and washed out the scene
 glm::vec3 pointLightColors[] = {
-	glm::vec3(1.0f, 1.0f, 1.0f), //white 
-	glm::vec3(1.0f, 1.0f, 1.0f), //white
-	glm::vec3(1.0f, 1.0f, 1.0f), //white 
-	glm::vec3(1.0f, 1.0f, 1.0f), //white
+	glm::vec3(0.961f, 0.871f, 0.702f), //white  set intensity to 10%
+	glm::vec3(0.961f, 0.871f, 0.702f), //white  set intensity to 10%
+	glm::vec3(0.961f, 0.871f, 0.702f), //white  set intensity to 100%
+	glm::vec3(0.961f, 0.871f, 0.702f), //white  set intensity to 100%
 
 };
 
@@ -202,73 +204,16 @@ int main()
 		1, 2, 3  // second triangle
 	};
 
-	//  ++++++++++++++++++++++++++++++
-	//  +                            +
-	//  +    Light Cubes Mesh        +
-	//	+                            +
-	//  ++++++++++++++++++++++++++++++
-
-	GLfloat lightVertices[] = {
-		// positions         // colors
-
-		//Left and Right Side
-		-0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f,  0.5f, -0.5f,
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f,  0.5f,
-		 0.5f, -0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-
-		//Front and Back
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f,  0.5f, -0.5f,
-		 0.5f,  0.5f,  0.5f,
-		 0.5f, -0.5f,  0.5f,
-
-		 //Top and Bottom
-		-0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f,  0.5f,
-		-0.5f, -0.5f,  0.5f,
-		 0.5f,  0.5f, -0.5f,
-		-0.5f,  0.5f, -0.5f,
-		-0.5f,  0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-	};
-
-	unsigned int lightIndices[] = {
-		0, 3, 2,
-		2, 1, 0,
-		4, 5, 6,
-		6, 7 ,4,
-		// left and right
-		11, 8, 9,
-		9, 10, 11,
-		12, 13, 14,
-		14, 15, 12,
-		// bottom and top
-		16, 17, 18,
-		18, 19, 16,
-		20, 21, 22,
-		22, 23, 20
-	};
-
 	//The viewpoint goes from x = 0, y = 0, to x = 800, y = 600
 	glViewport(0, 0, WIDTH, HEIGHT);
 
 	// Vertex Array Object, Vertex Buffer Object, Element Array Object
 	// VAO must be generated befor the VBO
 	//In this example I am making two objects, one for each triangle
-	GLuint VAOs[6], VBOs[6], EBOs[6];
-	glGenVertexArrays(6, VAOs);
-	glGenBuffers(6, VBOs);
-	glGenBuffers(6, EBOs);
+	GLuint VAOs[3], VBOs[3], EBOs[3];
+	glGenVertexArrays(3, VAOs);
+	glGenBuffers(3, VBOs);
+	glGenBuffers(3, EBOs);
 
 	//______________________________________________________________________________________________________________________________
 	//Rubik's Cube container setup
@@ -335,21 +280,6 @@ int main()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 //___________________________________________________________________________________________________________________
-	//light setup
-	glBindVertexArray(VAOs[3]);
-	glBindBuffer(GL_ARRAY_BUFFER, VBOs[3]);
-
-	//Stores vertices in VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(lightVertices), lightVertices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[3]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(lightIndices), lightIndices, GL_STATIC_DRAW);
-
-	//configures so the OpenGl knows how to use the VBO, position attributes
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	//______________________________________________________________________________________________________________________________________
 
 	unsigned int texture1, texture2, texture3, texture4, texture5;
 
@@ -523,14 +453,14 @@ int main()
 
 		// Fixed light 1
 		lightingShader.setVec3("pointLights[0].position", pointLightPositions[0].x, pointLightPositions[0].y, pointLightPositions[0].z);
-		lightingShader.setVec3("pointLights[0].ambient", pointLightColors[0].x * 0.1, pointLightColors[0].y * 0.1, pointLightColors[0].z * 0.1); //sets color intensity to 100%
+		lightingShader.setVec3("pointLights[0].ambient", pointLightColors[0].x * 1.0, pointLightColors[0].y * 1.0, pointLightColors[0].z * 1.0); //sets color intensity to 100%
 		lightingShader.setVec3("pointLights[0].diffuse", pointLightColors[0].x, pointLightColors[0].y, pointLightColors[0].z);
 		lightingShader.setVec3("pointLights[0].specular", pointLightColors[0].x, pointLightColors[0].y, pointLightColors[0].z);
 		lightingShader.setFloat("pointLights[0].constant", 1.0f);
 		lightingShader.setFloat("pointLights[0].linear", 0.09f);
 		lightingShader.setFloat("pointLights[0].quadratic", 0.032f);
 
-		// Fill light 1
+		// Fix light 2
 		lightingShader.setVec3("pointLights[1].position", pointLightPositions[1].x, pointLightPositions[1].y, pointLightPositions[1].z);
 		lightingShader.setVec3("pointLights[1].ambient", pointLightColors[1].x * 0.1, pointLightColors[1].y * 0.1, pointLightColors[1].z * 0.1); //sets color intesity to 10%
 		lightingShader.setVec3("pointLights[1].diffuse", pointLightColors[1].x, pointLightColors[1].y, pointLightColors[1].z);
@@ -540,18 +470,18 @@ int main()
 		lightingShader.setFloat("pointLights[1].quadratic", 0.032f);
 		std::cout << glGetError() << std::endl; // returns 0 (no error)
 
-		// Fixed light 1
+		// Fixed light 3
 		lightingShader.setVec3("pointLights[2].position", pointLightPositions[2].x, pointLightPositions[0].y, pointLightPositions[0].z);
-		lightingShader.setVec3("pointLights[2].ambient", pointLightColors[2].x * 1.0, pointLightColors[0].y * 1.0, pointLightColors[0].z * 1.0); //sets color intensity to 100%
+		lightingShader.setVec3("pointLights[2].ambient", pointLightColors[2].x * 0.1, pointLightColors[0].y * 0.1, pointLightColors[0].z * 0.1); //sets color intensity to 10%
 		lightingShader.setVec3("pointLights[2].diffuse", pointLightColors[2].x, pointLightColors[0].y, pointLightColors[0].z);
 		lightingShader.setVec3("pointLights[2].specular", pointLightColors[2].x, pointLightColors[0].y, pointLightColors[0].z);
 		lightingShader.setFloat("pointLights[2].constant", 1.0f);
 		lightingShader.setFloat("pointLights[2].linear", 0.09f);
 		lightingShader.setFloat("pointLights[2].quadratic", 0.032f);
 
-		// Fill light 1
+		// Fixed light 4
 		lightingShader.setVec3("pointLights[3].position", pointLightPositions[3].x, pointLightPositions[1].y, pointLightPositions[1].z);
-		lightingShader.setVec3("pointLights[3].ambient", pointLightColors[3].x * 1.0, pointLightColors[1].y * 1.0, pointLightColors[1].z * 1.0); //sets color intesity to 10%
+		lightingShader.setVec3("pointLights[3].ambient", pointLightColors[3].x * 1.0, pointLightColors[1].y * 1.0, pointLightColors[1].z * 1.0); //sets color intesity to 100%
 		lightingShader.setVec3("pointLights[3].diffuse", pointLightColors[3].x, pointLightColors[1].y, pointLightColors[1].z);
 		lightingShader.setVec3("pointLights[3].specular", pointLightColors[3].x, pointLightColors[1].y, pointLightColors[1].z);
 		lightingShader.setFloat("pointLights[3].constant", 1.0f);
@@ -605,8 +535,10 @@ int main()
 			//changes the size of the object
 			model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
 
+			//Adds lighting shader to the 3D model
 			lightingShader.setMat4("model", model);
-			//draws the triangles
+
+			//Draws the cube using the Draw Array
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 		std::cout << glGetError() << std::endl;
@@ -637,7 +569,9 @@ int main()
 			//changes the size of the object
 			model = glm::scale(model, glm::vec3(6.0f, 5.0f, 3.0f));
 
+			//Adds lighting shader to the 3D model
 			lightingShader.setMat4("model", model);
+
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(tableIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
@@ -669,7 +603,9 @@ int main()
 			//changes the size of the object
 			model = glm::scale(model, glm::vec3(6.0f, 5.0f, 5.0f));
 
+			//Adds lighting shader to the 3D model
 			lightingShader.setMat4("model", model);
+
 			//draws the triangles
 			glDrawElements(GL_TRIANGLES, sizeof(computerIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
@@ -701,8 +637,10 @@ int main()
 			//changes the size of the object
 			model = glm::scale(model, glm::vec3(6.0f, 5.0f, 5.0f));
 
+			//Adds lighting shader to the 3D model
 			lightingShader.setMat4("model", model);
-			//draws the triangles
+
+			//draws the triangles using the Elemental buffer
 			glDrawElements(GL_TRIANGLES, sizeof(computerIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
 		std::cout << glGetError() << std::endl;
@@ -732,8 +670,10 @@ int main()
 			//changes the size of the object
 			model = glm::scale(model, glm::vec3(6.0f, 5.0f, 5.0f));
 
+			//Adds lighting shader to the 3D model
 			lightingShader.setMat4("model", model);
-			//draws the triangles
+
+			//draws the triangles using the Elemental buffer
 			glDrawElements(GL_TRIANGLES, sizeof(computerIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
 		std::cout << glGetError() << std::endl;
@@ -743,32 +683,6 @@ int main()
 		lightCubeShader.setMat4("projection", projection);
 		lightCubeShader.setMat4("view", view);
 
-		glBindVertexArray(VAOs[3]);
-		//_________________________________
-		//								  -    
-		//    Render the Light cubes      -
-		//     with the light source      -
-		//_________________________________
-		for (unsigned int i = 0; i < 4; i++)
-		{
-			//initializes matrix to identity matrix
-			glm::mat4 model = glm::mat4(1.0f);
-
-			//Places the cubes and the light source at the same location
-			model = glm::translate(model, pointLightPositions[i]);
-
-			//changes the size of the object
-			model = glm::scale(model, glm::vec3(0.1f));
-
-			//Rotates the objects over the degees and x, y, z axis
-			model = glm::rotate(model, glm::radians(1.0f), glm::vec3(1.0, 0.0f, 0.0f));
-
-			lightCubeShader.setMat4("model", model);
-
-			//draws the triangles
-			glDrawElements(GL_TRIANGLES, sizeof(lightIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
-		}
-
 		glfwSwapBuffers(window);
 
 		//processes all GLFW events other than closing
@@ -776,9 +690,9 @@ int main()
 	}
 
 	//De-allocates resources
-	glDeleteVertexArrays(6, VAOs);
-	glDeleteBuffers(6, VBOs);
-	glDeleteBuffers(6, EBOs);
+	glDeleteVertexArrays(3, VAOs);
+	glDeleteBuffers(3, VBOs);
+	glDeleteBuffers(3, EBOs);
 
 	glfwDestroyWindow(window); //Terminates the window
 	glfwTerminate(); //Terminates GLFW
