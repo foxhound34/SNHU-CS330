@@ -53,8 +53,8 @@ glm::vec3 pointLightPositions[] = {
 
 //Changes the color of the light source
 glm::vec3 pointLightColors[] = {
-	glm::vec3(0.0f, 1.0f, 0.0f), //green 
-	glm::vec3(1.0f, 1.0f, 1.0f), //white
+	glm::vec3(0.0f, 1.0f, 0.0f), //green Key light
+	glm::vec3(1.0f, 1.0f, 1.0f), //white Fill light
 
 };
 
@@ -74,7 +74,7 @@ int main()
 #endif
 
 	//Builds a window (Width, Height, Title, Full screen, <reasons>)
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Assignment 6_Bamford", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Assignment 6 Bamford", NULL, NULL);
 
 	//error checking for window
 	if (window == NULL)
@@ -141,19 +141,6 @@ int main()
 		13, 15, 14 // Facing side
 	};
 
-	GLfloat pyramidBaseVertices[] = {
-		// positions			 Normals				texture
-	-0.5f,  0.0f,  0.5f,	0.0f, -1.0f, 0.0f,		0.5f, -0.5f,
-	-0.5f,  0.0f, -0.5f,	0.0f, -1.0f, 0.0f,	   -0.5f, -0.5f,
-	 0.5f,  0.0f, -0.5f,	0.0f, -1.0f, 0.0f,	   -0.5f,  0.5f,
-	 0.5f,  0.0f,  0.5f,	0.0f, -1.0f, 0.0f,	    0.5f,  0.5f,
-	};
-
-	unsigned int baseIndices[] = {
-		0, 1, 2,  //0.0, -1.0, 0.0
-		0, 2, 3,  //0.0, -1.0, 0.0
-	};
-
 	GLfloat lightVertices[] = {
 		// positions         // colors
 
@@ -211,19 +198,20 @@ int main()
 	// Vertex Array Object, Vertex Buffer Object, Element Array Object
 	// VAO must be generated befor the VBO
 	//In this example I am making two objects, one for each triangle
-	GLuint VAOs[3], VBOs[2], EBOs[2];
+	GLuint VAOs[2], VBOs[2], EBOs[2];
 	glGenVertexArrays(2, VAOs);
 	glGenBuffers(2, VBOs);
 	glGenBuffers(2, EBOs);
 
 	//______________________________________________________________________________________________________________________________
-	//Pyramid sides container setup
+	//Pyramid container setup
 	glBindVertexArray(VAOs[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
 
 	//Stores vertices in VBO
 	glBufferData(GL_ARRAY_BUFFER, sizeof(pyramidVertices), pyramidVertices, GL_STATIC_DRAW);
 
+	//Draw Element Array Buffer
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[0]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(pyramidIndices), pyramidIndices, GL_STATIC_DRAW);
 
@@ -240,13 +228,14 @@ int main()
 	glEnableVertexAttribArray(2);
 	//________________________________________________________________________________________________________________________________
 
-	//light setup
+	//Light container setup
 	glBindVertexArray(VAOs[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
 
 	//Stores vertices in VBO
 	glBufferData(GL_ARRAY_BUFFER, sizeof(lightVertices), lightVertices, GL_STATIC_DRAW);
 
+	//Draw Element Array Buffer
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[1]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(lightIndices), lightIndices, GL_STATIC_DRAW);
 
@@ -307,10 +296,9 @@ int main()
         lightingShader.setVec3("viewPos", camera.Position);
         lightingShader.setFloat("material.shininess", 2.0f);
 
-
         // Fixed light 1
-        lightingShader.setVec3("pointLights[0].position", pointLightPositions[0].x, pointLightPositions[0].y, pointLightPositions[0].z);
-		lightingShader.setVec3("pointLights[0].ambient", pointLightColors[0].x * 0.0, pointLightColors[0].y * 1.0, pointLightColors[0].z * 0.0); //sets color intensity to 100%
+        lightingShader.setVec3("pointLights[0].position", pointLightPositions[0].x, pointLightPositions[0].y, pointLightPositions[0].z); //Sets the position to the cube location
+		lightingShader.setVec3("pointLights[0].ambient", pointLightColors[0].x * 0.0, pointLightColors[0].y * 1.0, pointLightColors[0].z * 0.0); //sets the green color intensity to 100%
         lightingShader.setVec3("pointLights[0].diffuse", pointLightColors[0].x, pointLightColors[0].y, pointLightColors[0].z);
         lightingShader.setVec3("pointLights[0].specular", pointLightColors[0].x, pointLightColors[0].y, pointLightColors[0].z);
         lightingShader.setFloat("pointLights[0].constant", 1.0f);
@@ -318,8 +306,8 @@ int main()
         lightingShader.setFloat("pointLights[0].quadratic", 0.032f);
 
         // Fill light 1
-		lightingShader.setVec3("pointLights[1].position", pointLightPositions[1].x, pointLightPositions[1].y, pointLightPositions[1].z);
-		lightingShader.setVec3("pointLights[1].ambient", pointLightColors[1].x * 0.1, pointLightColors[1].y * 0.1, pointLightColors[1].z * 0.1); //sets color intesity to 10%
+		lightingShader.setVec3("pointLights[1].position", pointLightPositions[1].x, pointLightPositions[1].y, pointLightPositions[1].z);//Sets the position to the cube location
+		lightingShader.setVec3("pointLights[1].ambient", pointLightColors[1].x * 0.1, pointLightColors[1].y * 0.1, pointLightColors[1].z * 0.1); //sets white color intesity to 10%
 		lightingShader.setVec3("pointLights[1].diffuse", pointLightColors[1].x, pointLightColors[1].y, pointLightColors[1].z);
 		lightingShader.setVec3("pointLights[1].specular", pointLightColors[1].x, pointLightColors[1].y, pointLightColors[1].z);
         lightingShader.setFloat("pointLights[1].constant", 1.0f);
