@@ -47,15 +47,15 @@ float lastFrame = 0.0f;
 //Sets the location of the cubes at point of the light source
 glm::vec3 pointLightPositions[] = {
 
-	glm::vec3( 2.0f, 2.0f, -14.0f), // Key light location [0]
-	glm::vec3(-2.0f, 2.0f, -14.0f), // Key light location [1]
-	glm::vec3(-8.0f, 2.0f, -14.0f), // Key light location [2]
-	glm::vec3( 8.0f, 2.0f, -14.0f), // Key light location [3]
+	glm::vec3( 2.0f, 2.0f, -14.0f), // Key light location [0] center right
+	glm::vec3(-2.0f, 2.0f, -14.0f), // Key light location [1] center left
+	glm::vec3(-8.0f, 2.0f, -14.0f), // Key light location [2] far left
+	glm::vec3( 8.0f, 2.0f, -14.0f), // Key light location [3] far right
 };
 
-//Changes the color of the light source
-//Color used is called "Wheat" it allows for a softer white light that better replicates the intial photo.
-//I found an all white source was too harsh and washed out the scene
+// Changes the color of the light source
+// Color used is called "Wheat" it allows for a softer white light that better replicates the intial photo.
+// I found an all white source was too harsh and washed out the scene
 glm::vec3 pointLightColors[] = {
 	glm::vec3(0.961f, 0.871f, 0.702f), //white  set intensity to 10%
 	glm::vec3(0.961f, 0.871f, 0.702f), //white  set intensity to 10%
@@ -109,11 +109,9 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 
 	Shader lightingShader("2.2.basic_lighting.vs", "2.2.basic_lighting.fs");
-	Shader lightCubeShader("2.2.light_cube.vs", "2.2.light_cube.fs");
 	std::cout << glGetError() << std::endl; // returns 0 (no error)
 
-	//Vertex and Normals from learnopengl.com
-
+		//Vertex and Normals from learnopengl.com
 		//  ++++++++++++++++++++++++++++++
 		//  +                            +
 		//  +    Ribik's Cube Mesh       +
@@ -165,6 +163,7 @@ int main()
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
 	};
 
+	// Normals calculated using cross-product and Normals caluculation
 	//  ++++++++++++++++++++++++++++++
 	//  +                            +
 	//  +      Countertop Mesh       +
@@ -423,8 +422,6 @@ int main()
 	}
 	stbi_image_free(data5);
 
-
-
 	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
 	// -------------------------------------------------------------------------------------------
 	// be sure to activate shader when setting uniforms/drawing objects
@@ -677,11 +674,6 @@ int main()
 			glDrawElements(GL_TRIANGLES, sizeof(computerIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
 		std::cout << glGetError() << std::endl;
-
-		// also draw the lamp object
-		lightCubeShader.use();
-		lightCubeShader.setMat4("projection", projection);
-		lightCubeShader.setMat4("view", view);
 
 		glfwSwapBuffers(window);
 
