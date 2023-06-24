@@ -1,0 +1,400 @@
+#include <GLFW\glfw3.h>
+#include "linmath.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <conio.h>
+#include <iostream>
+#include <vector>
+#include <windows.h>
+#include <time.h>
+
+using namespace std;
+
+//converts degrees to radians
+const float DEG2RAD = 3.14159 / 180;
+
+void processInput(GLFWwindow *window);
+
+enum BRICKTYPE { REFLECTIVE, DESTRUCTABLE };
+enum ONOFF {ON,OFF};
+
+
+class Brick
+{
+public:
+	float red, green, blue;
+	float x, y, width;
+	BRICKTYPE brick_type;
+	ONOFF onoff;
+
+	Brick(BRICKTYPE bt, float xx, float yy, float ww, float rr, float gg, float bb)
+	{
+		brick_type = bt; x = xx; y = yy, width = ww; red = rr, green = gg, blue = bb;
+		onoff = ON;
+	};
+
+	void drawBrick()
+	{
+		if (onoff == ON)
+		{
+			//controls size of bricks
+			//double halfside = width / 3;
+
+			glColor3d(red, green, blue);
+			glBegin(GL_POLYGON);
+
+			//controls size and shape of bricks
+			glVertex2d(x + 0.12, y + 0.09);
+			glVertex2d(x + 0.12, y - 0.0);
+			glVertex2d(x - 0.12, y - 0.0);
+			glVertex2d(x - 0.12, y + 0.09);
+
+			glEnd();
+		}
+	}
+};
+
+
+class Circle
+{
+public:
+	float red, green, blue;
+	float radius;
+	float x;
+	float y;
+
+	//reduced the speed of the balls
+	float speed = 0.01;
+	int direction; // 1=down 2=right 3=up  4=left  5 = down right  6= down left  7 = up right   8 = up left    
+
+	Circle(double xx, double yy, double rr, int dir, float rad, float r, float g, float b)
+	{
+		x = xx;
+		y = yy;
+		radius = rr;
+		red = r;
+		green = g;
+		blue = b;
+		radius = rad;
+		direction = dir;
+	}
+
+	void CheckCollision(Brick* brk)
+	{
+		int hp = 3;
+
+		if (brk->brick_type == REFLECTIVE)
+		{
+			if ((x > brk->x - brk->width && x <= brk->x + brk->width) && (y > brk->y - brk->width && y <= brk->y + brk->width))
+			{
+				direction = GetRandomDirection();
+				x = x + 0.03;
+				y = y + 0.04;
+
+				// https://stackoverflow.com/questions/686353/random-float-number-generation
+				brk->blue = static_cast<float> (rand()) / static_cast<float> (RAND_MAX);
+				brk->red = static_cast<float>(rand()) / static_cast<float> (RAND_MAX);
+				brk->green = static_cast<float>(rand()) / static_cast<float> (RAND_MAX);
+			}
+		}
+		else if (brk->brick_type == DESTRUCTABLE)
+		{
+			while (hp > 0) {
+				if ((x > brk->x - brk->width && x <= brk->x + brk->width) && (y > brk->y - brk->width && y <= brk->y + brk->width))
+				{
+					brk->brick_type == DESTRUCTABLE
+					//Turns brick off when there is a ball collision
+					brk->onoff = ON;
+					hp = hp -= 1;
+					cout << hp << endl;
+				}
+				break;
+			}
+			
+		}
+	}
+
+	int GetRandomDirection()
+	{
+		return (rand() % 8) + 1;
+	}
+
+	void MoveOneStep()
+
+		/* Additional physics were added to the balls. The direction was changed based on the axis of the travel
+		* Explination:  A ball traveling in the -y direction was changed to the +y direction, the x axis is disregarded.
+		*               A ball traveling in the +y direction was changed to the -y diraction, the x axis is disregarded.
+		*				A ball traveling in the +x direction was changed to the -x diraction, the y axis is disregarded.
+		*				A ball traveling in the -x direction was changed to the +x diraction, the y axis is disregarded.
+		*				All cardinal directions were left with random number dirctions upon collision.
+		*/
+	{
+		if (direction == 1)  // down
+		{
+			if (y >= -1 + radius)
+			{
+				y -= speed;
+			}
+			else
+			{
+				direction = GetRandomDirection();
+			}
+		}
+
+		if (direction == 5)  // down-right to up-right
+		{
+			if (y >= -1 + radius)
+			{
+				y -= speed;
+			}
+			else
+			{
+				direction = 7;
+			}
+		}
+
+		if (direction == 6)  // down-left to up-left
+		{
+			if (y >= -1 + radius)
+			{
+				y -= speed;
+			}
+			else
+			{
+				direction = 8;
+			}
+		}
+
+		if (direction == 2)  // right
+		{
+			if (x <= 1 - radius)
+			{
+				x += speed;
+			}
+			else
+			{
+				direction = GetRandomDirection();
+			}
+		}
+
+		if (direction == 5)  // down-right to down-left
+		{
+			if (x <= 1 - radius)
+			{
+				x += speed;
+			}
+			else
+			{
+				direction = 6;
+			}
+		}
+
+		if (direction == 7)  // up-right to up-left
+		{
+			if (x <= 1 - radius)
+			{
+				x += speed;
+			}
+			else
+			{
+				direction = 8;
+			}
+		}
+
+		if (direction == 3)  // up
+		{
+			if (y <= 1 - radius) {
+				y += speed;
+			}
+			else
+			{
+				direction = GetRandomDirection();
+			}
+		}
+
+		if (direction == 7)  // up-right to up-left
+		{
+			if (y <= 1 - radius) {
+				y += speed;
+			}
+			else
+			{
+				direction = 5;
+			}
+		}
+
+		if (direction == 8)  // up-left to down-left
+		{
+			if (y <= 1 - radius) {
+				y += speed;
+			}
+			else
+			{
+				direction = 6;
+			}
+		}
+
+		if (direction == 4)  // left
+		{
+			if (x >= -1 + radius) {
+				x -= speed;
+			}
+			else
+			{
+				direction = GetRandomDirection();
+			}
+		}
+
+		if (direction == 6)  // down-left to down-right
+		{
+			if (x >= -1 + radius) {
+				x -= speed;
+			}
+			else
+			{
+				direction = 5;
+			}
+		}
+
+		if (direction == 8)  // up-left to up-right
+		{
+			if (x >= -1 + radius) {
+				x -= speed;
+			}
+			else
+			{
+				direction = 7;
+			}
+		}
+	}
+
+	void DrawCircle()
+	{
+		glColor3f(red, green, blue);
+		glBegin(GL_POLYGON);
+		for (int i = 0; i < 360; i++) {
+			float degInRad = i * DEG2RAD;
+			glVertex2f((cos(degInRad)*radius) + x, (sin(degInRad)*radius) + y);
+		}
+		glEnd();
+	}
+};
+
+
+vector<Circle> world;
+
+
+int main(void) {
+
+	//seeds random number generator
+	srand(time(NULL));
+
+	if (!glfwInit()) {
+		exit(EXIT_FAILURE);
+	}
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+	GLFWwindow* window = glfwCreateWindow(480, 480, "Brick Breakout", NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
+	glfwMakeContextCurrent(window);
+	glfwSwapInterval(1);
+
+	//Row 1
+	Brick brick (DESTRUCTABLE,  0.8, 0.8, 0.2, 0.678, 1, 0.184);
+	Brick brick2(DESTRUCTABLE,  0.4, 0.8, 0.2, 0.59, 0.808, 0.980);
+	Brick brick3(DESTRUCTABLE,  0.0, 0.8, 0.2, 0.545, 0.271, 0.075);
+	Brick brick4(DESTRUCTABLE, -0.4, 0.8, 0.2, 1, 0.5, 0.5);
+	Brick brick5(DESTRUCTABLE, -0.8, 0.8, 0.2, 0, 1, 1);
+
+	// Row 2
+	Brick brick6(DESTRUCTABLE,  0.6, 0.5, 0.2, 0, 1, 1);
+	Brick brick7(DESTRUCTABLE,    0.2, 0.5, 0.2, 0.0, 1.0, 0.0);
+	Brick brick8(DESTRUCTABLE,   -0.2, 0.5, 0.2, 1.0, 0.0, 0.0);
+	Brick brick9(DESTRUCTABLE, -0.6, 0.5, 0.2, 0, 1, 1);
+
+	//Row 3
+	Brick brick11(REFLECTIVE, 0.4, 0.2, 0.2, 0.502, 0.502, 0.502);
+	Brick brick12(REFLECTIVE, -0.4, 0.2, 0.2, 0.502, 0.502, 0.502);
+
+    //Paddle
+	Brick brick10(REFLECTIVE, 0.0, -0.9, 0.2, 1, 1, 1);
+
+	while (!glfwWindowShouldClose(window)) {
+		//Setup View
+		float ratio;
+		int width, height;
+		glfwGetFramebufferSize(window, &width, &height);
+		ratio = width / (float)height;
+		glViewport(0, 0, width, height);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		processInput(window);
+
+		//Checks for collisions 
+		for (int i = 0; i < world.size(); i++)
+		{
+			world[i].CheckCollision(&brick);
+			world[i].CheckCollision(&brick2);
+			world[i].CheckCollision(&brick3);
+			world[i].CheckCollision(&brick4);
+			world[i].CheckCollision(&brick5);
+			world[i].CheckCollision(&brick6);
+			world[i].CheckCollision(&brick7);
+			world[i].CheckCollision(&brick8);
+			world[i].CheckCollision(&brick9);
+			world[i].CheckCollision(&brick10);
+			world[i].CheckCollision(&brick11);
+			world[i].CheckCollision(&brick12);
+			world[i].MoveOneStep();
+			world[i].DrawCircle();
+			
+		}
+
+		// Draws the bricks to the screen
+		brick.drawBrick();
+		brick2.drawBrick();
+		brick3.drawBrick();
+		brick4.drawBrick();
+		brick5.drawBrick();
+		brick6.drawBrick();
+		brick7.drawBrick();
+		brick8.drawBrick();
+		brick9.drawBrick();
+		brick10.drawBrick();
+		brick11.drawBrick();
+		brick12.drawBrick();
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
+	glfwDestroyWindow(window);
+	glfwTerminate;
+	exit(EXIT_SUCCESS);
+}
+
+
+void processInput(GLFWwindow *window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+	{
+		double r, g, b;
+
+		//randomizes color of balls
+		r = rand() / 10000;
+		g = rand() / 10000;
+		b = rand() / 10000;
+
+		//Moved orgin location of balls to the bottom of the screen
+		// 
+		//        X , Y,   radius   Direction, Size,  colors
+		Circle B(0.0,-0.7,  2.0,	 3.0,     0.03,  r, g, b);
+		world.push_back(B);
+	}
+}
